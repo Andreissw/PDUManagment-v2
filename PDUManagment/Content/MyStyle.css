@@ -1,0 +1,60 @@
+﻿.MyForm {
+    display: block;
+    align-items: center;
+    padding: 1%;
+    margin-top: 1.5%;
+}
+
+.block {
+    display: flex;
+    align-self: flex-start;
+    border-top: 1px dashed gray;
+    padding-bottom:2%;
+}
+
+    .block div {
+        margin: 0.3%;
+    }
+
+.list {
+    width: 300px;
+    height: 1000px;
+    max-width: auto;
+    max-height: auto;
+}
+
+.TBWidth {
+    width: 300px; 
+    max-width: auto;
+}
+
+.BlockDocument {
+    overflow-x: auto;
+    overflow-y: auto;
+    display: flex;
+    align-self: stretch;
+    padding: 2%;
+    background-color: cornsilk;
+    border: 0.2px dashed gray;
+}
+
+    .BlockDocument div {
+        margin-left: 1%;
+        /*width: 500px;*/
+    }
+
+.HorizForm div {
+    width: 300px;
+    margin: 0.3%;
+    padding: 0.5%;
+}
+
+
+.Spec {
+
+    display: block;
+    align-items: flex-start;
+    margin:1%;
+    padding:1%;
+
+}

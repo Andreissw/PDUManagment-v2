@@ -1,0 +1,114 @@
+﻿@model IEnumerable<PDUManagment.Classes.Table>
+
+@{
+    ViewBag.Title = "GetTableLots";
+}
+
+<h2>Протоколы</h2>
+
+<div class="tb">
+    <table class="table">
+        <tr>
+            <th>Имя протокола</th>    
+            <th>Программы </th>
+            <th>Сторон на плате  </th>
+            <th>Дата создания  </th>        
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+             
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProtocolName)
+                </td>              
+                <td>
+                    @Html.ActionLink("Показать", "GetPGName", new { ProtocolID = item.ID, name = item.Name, Protocolname = item.ProtocolName }, new { @class = "btn btn-info", target = "_blank" })
+
+                    @*<table style="font-size:11px">
+                        <tr>
+                            <th>Оборудование</th>
+                            <th>Программа</th>
+
+                        </tr>
+
+                        @foreach (var item2 in item.ProgrammName)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item2.Machine)
+                                </td>
+                                <td style="white-space:nowrap">
+                                    @Html.DisplayFor(modelItem => item2.PGName)
+                                </td>
+                            </tr>
+
+                        }
+                        </table>*@
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TOPBOT)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateCreate)
+                </td>
+              
+
+                @*@if (true)
+                    {
+                        <td style="border-left:3px dashed black" >
+                            @Html.ActionLink("Редактировать", "Index", "Edit", new { id = item.ID, mode = "Edit" }, "") |
+                            @Html.ActionLink("Открыть", "Index", "Edit", new { id = item.ID, mode = "Open" },"")
+                        </td>
+                    }*@
+
+            </tr>
+        }
+
+    </table>
+</div>
+
+<style>
+
+    .tb {
+        max-width:auto;
+        width:auto;
+        align-items:center;
+    }
+    .tb thead {
+        align-items: center;
+        position: sticky;
+        top: 0px;
+        border: 5px solid black;
+    }
+
+    .tb th {
+        align-content: center;
+        text-align: center;
+        background-color: gold;
+        border-top: 2px solid black;
+    }
+
+    .tb td {
+        /*width: 10%;*/
+        /*overflow: visible;*/
+        align-items: center;
+        text-align: center;
+        padding: 2%;
+        margin: 1%;
+        border-bottom: 2px dotted gray;
+    }
+
+        .tb table {
+            font-size: 14px;
+            background-color: antiquewhite;
+        }
+
+    .tb tr:nth-child(odd) {
+        background-color: #EAF2D3;
+    }
+   
+
+</style>

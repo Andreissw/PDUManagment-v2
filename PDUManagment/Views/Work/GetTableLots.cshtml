@@ -1,0 +1,87 @@
+﻿@model IEnumerable<PDUManagment.Classes.Table>
+
+<h2>Заказы</h2>
+
+<table class="table">
+    <tr>
+        <th>Статус заказа</th>
+        <th>Тип заказа </th>       
+        <th>Заказичк </th>
+        <th>Имя Заказа  </th>     
+        <th>Дата создания  </th>    
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+<tr>
+    <td>
+        @if (item.IsActive)
+        {
+            @Html.Label("Открытый заказ", new  { @style = "background-color:lightgreen"})
+        }
+        else
+        {
+            @Html.Label("Закрытый заказ", new { @style = "background-color:lightcoral" })
+        }
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.TypeClient)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.NameClient)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Name)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.DateCreate)
+    </td>
+
+    <td style="border-left:3px dashed black">
+        @if (Session["Service"].ToString() == "15")
+        {
+            @Html.ActionLink("Редактировать", "Index", "Edit",new { id = item.ID, mode = "Edit" }, new {  @class = "btn btn-success", style = "background-color:gold; color:black" })
+        }
+
+        @Html.ActionLink("Открыть", "Index", "Edit", new { id = item.ID, mode = "Open" },  new { @class = "btn btn-success", style = "background-color:cornsilk; color:black" })
+    </td>
+</tr>
+    }
+
+</table>
+
+<style>
+    thead {
+        align-items: center;
+        position: sticky;
+        top: 0px;
+        border: 5px solid black;
+    }
+
+    th {
+        align-content: center;
+        text-align: center;
+        background-color: gold;
+        border-top: 2px solid black;
+    }
+
+    td {
+        width: 10%;
+        overflow: visible;
+        align-items: center;
+        text-align: center;
+        padding: 2%;
+        margin: 1%;
+        border-bottom: 2px dotted gray;
+    }
+
+    table {
+        font-size: 14px;
+        background-color: antiquewhite;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #EAF2D3;
+    }
+</style>

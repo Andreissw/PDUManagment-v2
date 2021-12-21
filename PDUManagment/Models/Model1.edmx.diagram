@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="536cb47be1ce4ecfb557c45761fd1215" Name="Diagram1" ZoomLevel="76">
+        <EntityTypeShape EntityType="FASModel.EP_Service" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_GS_LOTs" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_Users" Width="1.5" PointX="0.75" PointY="4" IsExpanded="true" />
+        <AssociationConnector Association="FASModel.FK_FAS_GS_LOTs_FAS_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="FASModel.FK_FAS_GS_LOTs_FAS_Users1" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="FASModel.CT_Сustomers" Width="1.5" PointX="8.375" PointY="3.75" />
+        <EntityTypeShape EntityType="FASModel.EP_Log" Width="1.5" PointX="5.75" PointY="8.75" />
+        <EntityTypeShape EntityType="FASModel.EP_Protocols" Width="1.5" PointX="8.75" PointY="6.75" />
+        <EntityTypeShape EntityType="FASModel.EP_ProtocolsInfo" Width="1.5" PointX="10.75" PointY="0.75" />
+        <EntityTypeShape EntityType="FASModel.EP_Result" Width="1.5" PointX="0.75" PointY="10.75" />
+        <EntityTypeShape EntityType="FASModel.EP_TypeDocument" Width="1.5" PointX="2.75" PointY="10.75" />
+        <EntityTypeShape EntityType="FASModel.EP_TypeVerification" Width="1.5" PointX="10.75" PointY="4.75" />
+        <EntityTypeShape EntityType="FASModel.EP_Doc" Width="1.5" PointX="8.375" PointY="10.75" />
+        <EntityTypeShape EntityType="FASModel.EP_Machine" Width="1.5" PointX="10.375" PointY="10.75" />
+        <EntityTypeShape EntityType="FASModel.EP_PGName" Width="1.5" PointX="5.375" PointY="12.75" />
+        <EntityTypeShape EntityType="FASModel.FAS_Models" Width="1.5" PointX="12.375" PointY="9" />
+        <AssociationConnector Association="FASModel.FK_FAS_GS_LOTs_FAS_Models" />
+        <EntityTypeShape EntityType="FASModel.Contract_LOT" Width="1.5" PointX="12.375" PointY="12.75" />
+        <AssociationConnector Association="FASModel.EP_protoc_fk" />
+        <AssociationConnector Association="FASModel.EP_LogProtoc_fk" />
+        <AssociationConnector Association="FASModel.EP_LogServ_fk" />
+        <AssociationConnector Association="FASModel.EP_LogUserID_fk" />
+        <AssociationConnector Association="FASModel.EP_LogVer_fk" />
+        <AssociationConnector Association="FASModel.EP_MAch_fk" />
+        <AssociationConnector Association="FASModel.EP_Pg_fk" />
+        <AssociationConnector Association="FASModel.EP_ProtocolInfo_fk" />
+        <AssociationConnector Association="FASModel.EP_TypeVer_fk" />
+        <AssociationConnector Association="FASModel.EP_UserID_fk" />
+        <AssociationConnector Association="FASModel.EP_Serv_fk" />
+        <AssociationConnector Association="FASModel.EP_Doc_fk" />
+        <EntityTypeShape EntityType="FASModel.EP_FileTypeMIME" Width="1.5" PointX="5.375" PointY="3.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

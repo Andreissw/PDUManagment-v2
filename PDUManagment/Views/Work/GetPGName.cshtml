@@ -1,0 +1,46 @@
+﻿
+@model IEnumerable<PDUManagment.Classes.ProgrammNames>
+
+<div style="margin:1%">
+    <div>
+        <h2> Список программ у оборудования </h2>
+    </div>
+    <div class="block" >
+        <div> <h3> Имя протокола - @Model.FirstOrDefault().ProtocolName </h3></div>
+        <div> <h3>Заказ - @Model.FirstOrDefault().Name</h3></div>       
+    </div>
+</div>
+@foreach (var item in new List<string>() { "TOP", "BOT" })
+{
+    <h2>Сторона - @item</h2>
+    <table class="table">
+        <tr>
+            <th>
+                Оборудование
+            </th>
+            <th>
+                Программа
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var i in Model.Where(c => c.TOPBOT == item))
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => i.Machine)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => i.PGName)
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+
+<style>
+    .block div {
+        border-bottom: 1px solid gray;
+        margin:1%;
+    }
+</style>

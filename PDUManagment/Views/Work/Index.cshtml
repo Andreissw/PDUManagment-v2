@@ -1,0 +1,28 @@
+﻿
+<h3>Добрый день! @Session["Name"]</h3>
+
+@Html.ActionLink("Выйти из учетной записи", "Index","Home", "", htmlAttributes: new { @class = "btn btn-disabled" })
+
+@if (@Session["Service"].ToString() == "15") // @* Кнопка будет доступна только некоторым людям*@
+{
+    <div style="margin:3%">
+        <div>
+        @using (Html.BeginForm("Index", "CreateLOT", "", FormMethod.Post))
+        {
+            <input class="btn btn-success" type="submit" value="Создать новый заказ/протокол" />
+        }
+        </div>
+        @*<div>
+        @using (Html.BeginForm("Index", "CreatePrt", FormMethod.Post))
+        {
+            <input class="btn btn-warning" type="submit" value="Создать протокол по существущему заказу" />
+        }
+        </div>*@
+     </div>
+}
+
+<div>
+    @Html.Action("GetTableLots");
+</div>
+
+

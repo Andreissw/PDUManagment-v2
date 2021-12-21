@@ -1,0 +1,197 @@
+﻿@model PDUManagment.Classes.Create.CreateOrder
+<link rel="stylesheet" href="~/Content/MyStyle.css" />
+<h3>Пользователь @Session["Name"]</h3>
+
+@if (TempData["Er"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Er"]
+    </div>
+}
+
+@using (Html.BeginForm("CreateLot", "CreateLOT", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="MyForm">
+    <h3>Создать заказ</h3>
+    <hr />
+
+    <div class="block">
+        <div>
+            <div>@Html.LabelFor(model => model.ClientType, "Вид заказчика", htmlAttributes: new { @class = "control-label " })</div>
+            <div>@Html.DropDownListFor(model => model.ClientType, Model.TypeClient, htmlAttributes: new { @class = "form-control", @id = "Client", style = "max-width:200px; width:200px;", onchange = "getVisible(value)" })</div>
+            <div>@Html.ValidationMessageFor(model => model.ClientType, "", new { @class = "alert-danger" })</div>
+
+        </div>
+        <div id="OrderDiv">
+            <div> @Html.LabelFor(model => model.ClientName, "Заказчик", htmlAttributes: new { @class = "control-label " })</div>
+            <div>@Html.DropDownListFor(model => model.ClientName, Model.Client, htmlAttributes: new { @class = "form-control", style = "max-width:200px; width:200px;" })  </div>
+            <div>@Html.ValidationMessageFor(model => model.ClientName, "", new { @class = "alert-danger" })</div>
+
+        </div>
+    </div>
+
+    <div class="HorizForm">
+        <div>@Html.LabelFor(model => model.Order, "Имя заказа", htmlAttributes: new { @class = "control-label " })</div>
+        <div>@Html.EditorFor(model => model.Order, new { htmlAttributes = new { @class = "form-control" } })</div>
+        <div>@Html.ValidationMessageFor(model => model.Order, "", new { @class = "alert-danger" })</div>
+    </div>
+
+
+    <div class="HorizForm">
+        <div>@Html.LabelFor(model => model.Count, "Количество в заказе", htmlAttributes: new { @class = "control-label " })</div>
+        <div>@Html.EditorFor(model => model.Count, new { htmlAttributes = new { @class = "form-control" } })</div>
+        <div>@Html.ValidationMessageFor(model => model.Count, "", new { @class = "alert-danger" })</div>
+    </div>
+
+    <div class="HorizForm">
+        <div>@Html.LabelFor(model => model.Date, "Выбрать дату выпуска заказа", htmlAttributes: new { @class = "control-label " })</div>
+        <div>@Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })</div>     
+        <div>@Html.ValidationMessageFor(model => model.Date, "", new { @class = "alert-danger" })</div>
+    </div>
+
+    <div>@Html.Label("Загрузка Спецификации к заказу")</div>
+    <div class="BlockDocument">
+        <div>
+            <div>@Html.LabelFor(model => model.SpecificationBom, "Имя Спецификации-BOM", htmlAttributes: new { @class = "control-label " })</div>
+            <div>@Html.TextBoxFor(model => model.SpecificationBom, new { @id = "SpecBOM", @style = "max-width: auto; width:500px;" })</div>
+            <div>@Html.ValidationMessageFor(model => model.SpecificationBom, "", new { @class = "alert-danger" })</div>
+        </div>
+        <div>
+            @*<div>
+                    <div>@Html.LabelFor(model => model.FileSpec, "Загрузить спецификацию", htmlAttributes: new { @class = "control-label " })</div>
+                    <div>@Html.TextBoxFor(model => model.FileSpec, new { @type = "file", @name = "file", @id = "spec",  onchange = "SetName(this)" })</div>
+                    <div>@Html.ValidationMessageFor(model => model.FileSpec, "", new { @class = "alert-danger" })</div>
+                </div>*@
+            <div>
+                <div>@Html.LabelFor(model => model.FileSpec, "Загрузить спецификацию", htmlAttributes: new { @class = "control-label " })</div>
+                <div>@Html.TextBoxFor(model => model.FileSpec, new { @type = "file", @name = "file", @id = "spec", onchange = "SetName(this)" })</div>
+                <div>@Html.ValidationMessageFor(model => model.FileSpec, "", new { @class = "alert-danger" })</div>
+                @*@Html.HiddenFor(m => m.FileSpec);*@
+            </div>
+        </div>
+    </div>
+
+
+    <div>@Html.Label("Загрузка документов к заказу (*не обязательное поле)")</div>
+    <div class="BlockDocument">
+        <div>
+            <div>@Html.Label("BOM")</div>
+            <div>@Html.TextBoxFor(model => model.BOM, new { @type = "file", @name = "BOM", @id = "BOM", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+            <div>@Html.ListBox("BOM", new SelectList(new List<string>()), new { id = $"LPBOM", @class = "list" }) </div>
+        </div>
+
+        <div>
+            <div>@Html.Label("Gerbers")</div>
+            <div>@Html.TextBoxFor(model => model.Gerbers, new { @type = "file", @name = "Gerbers", @id = "Gerbers", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+            <div>@Html.ListBox("Gerbers", new SelectList(new List<string>()), new { id = $"LPGerbers", @class = "list" }) </div>
+        </div>
+
+        <div>
+            <div>@Html.Label("PickPlace")</div>
+            <div>@Html.TextBoxFor(model => model.PickPlace, new { @type = "file", @name = "PickPlace", @id = "PickPlace", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+            <div>@Html.ListBox("PickPlace", new SelectList(new List<string>()), new { id = $"LPPickPlace", @class = "list" }) </div>
+        </div>
+
+        <div>
+            <div>@Html.Label("AssemblyDrawings")</div>
+            <div>@Html.TextBoxFor(model => model.AssemblyDrawings, new { @type = "file", @name = "AssemblyDrawings", @id = "AssemblyDrawings", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+            <div>@Html.ListBox("AssemblyDrawings", new SelectList(new List<string>()), new { id = $"LPAssemblyDrawings", @class = "list" }) </div>
+        </div>
+
+        <div>
+            <div>@Html.Label("Schematic")</div>
+            <div>@Html.TextBoxFor(model => model.Schematic, new { @type = "file", @name = "Schematic", @id = "Schematic", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+            <div>@Html.ListBox("Schematic", new SelectList(new List<string>()), new { id = $"LPSchematic", @class = "list" }) </div>
+        </div>
+
+        <div>
+            <div>@Html.Label("FirmWare")</div>
+            <div>@Html.TextBoxFor(model => model.Fireware, new { @type = "file", @name = "Fireware", @id = "Fireware", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+            <div>@Html.ListBox("FirmWare", new SelectList(new List<string>()), new { id = $"LPFireware", @class = "list" }) </div>
+        </div>
+
+    </div>
+
+
+    <div class="HorizForm">
+        <div>@Html.LabelFor(model => model.TOPBOTName, "Стороны изделия", htmlAttributes: new { @class = "control-label " })</div>
+        <div>@Html.DropDownListFor(model => model.TOPBOTName, Model.TOPBOT, new { htmlAttributes = new { @class = "Wid" } })</div>
+        <div>@Html.ValidationMessageFor(model => model.TOPBOTName, "", new { @class = "alert-danger" })</div>
+    </div>
+
+    <div class="HorizForm">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Создать заказ" class="btn btn-success" id="SumbitOK" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Вернуться назад", "Index","Work")
+</div>
+
+
+
+<script src="~/Scripts/MyJava.js">
+
+ 
+
+</script>
+
+
+<style >
+
+     
+
+    /*.MyForm {    
+        display:block;
+        align-items:center;
+        padding:1%;
+        margin-top:1.5%;
+       
+    }
+
+    .block {
+        display: flex;
+        align-self: stretch;        
+    }
+
+        .block div {
+            margin:2%;
+        }
+
+    .list {
+        width: 300px;
+        height: 1000px;
+        max-width: auto;
+        max-height: auto;        
+    }
+
+    .BlockDocument {
+        overflow-x: auto;
+        overflow-y: auto;
+        display: flex;
+        align-self: stretch;   
+        padding:2%;
+        background-color: cornsilk;
+        border:0.2px dashed gray;
+    }
+
+        .BlockDocument div {
+            margin-left: 1%;*/
+            /*width: 500px;*/
+        /*}
+
+    .HorizForm div{
+
+        width: 300px;
+        margin: 0.3%;
+        padding: 0.5%;     
+
+    }*/
+
+
+</style>

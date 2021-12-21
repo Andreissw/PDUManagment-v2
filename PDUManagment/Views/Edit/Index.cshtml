@@ -1,0 +1,419 @@
+﻿@model PDUManagment.Classes.Create.CreateOrder
+
+@{ 
+    string Value = "";
+    string Color = "";
+
+}
+<link rel="stylesheet" href="~/Content/MyStyle.css" />
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/ajax.googleapis.comajaxlibsjqueryui1.12.1jquery-ui.min.js"></script>
+<script src="~/Scripts/ajaxlibsjquery3.2.1jquery.js"></script>
+
+<div>
+    <div>
+        <h1>Пользователь @Session["Name"]</h1>
+    </div>
+    <div>
+        <h2>Редактирование протокола</h2>
+        <h3>Протокол @Model.ProtocolName</h3>
+        <h3> Заказ @Model.Order </h3>
+    </div>
+</div>
+
+<div style="margin-top:2%;">
+    @using (Html.BeginForm("CloseOpenLot", "Edit", FormMethod.Post))
+    {
+        @Html.HiddenFor(c => c.LOTID)
+        @Html.HiddenFor(c => c.IsActive)
+
+        if (Model.IsActive)
+        {
+            Value = "Закрыть_Заказ";
+            Color = "background-color: lightcoral;";
+        }
+        else
+        {
+            Value = "Открыть_Заказ";
+            Color = "";
+
+        }
+
+        <input type="submit" value=@Value class="btn btn-success" style="@Color max-width:150px; height:auto "  />
+    }
+</div>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+
+        @Html.AntiForgeryToken()
+        
+    <div class="MyForm">
+        <div style="background-color: lightgray; border:1px dashed gray">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            @using (Html.BeginForm("EditOrder", "Edit", FormMethod.Post))
+            {
+                @Html.Label("Имя Заказа")
+                <div class="block">
+                    <div>
+
+                        @if (Model.mode != "Open")
+                        {
+                            @Html.EditorFor(model => model.Order, new { htmlAttributes = new { @class = "form-control" ,@style="max-width: 300px; width:auto" } })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.Order, new { htmlAttributes = new { @class = "form-control", @style = "max-width: 300px; width:auto" } })
+                        }
+
+                        @Html.ValidationMessageFor(model => model.Order, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(c => c.LOTID)
+                        @Html.HiddenFor(c => c.ProtocolID)
+                    </div>
+                    <div>
+                        @if (Model.mode != "Open")
+                        {
+                            <input type="submit" value="Сохранить" class="btn btn-success" />
+                        }
+                    </div>
+                    <div>
+                        @if (TempData["ErrOrder"] != null)
+                        {
+                            @Html.Label(TempData["ErrOrder"].ToString(), new { @style = "color:lightcoral; background-color: gray" })
+                        }
+                        else if (TempData["OKOrder"] != null)
+                        {
+                            @Html.Label(TempData["OKOrder"].ToString(), new { @style = "color:greenyellow; background-color: gray" })
+                        }
+                    </div>
+                </div>
+
+            }
+
+            @using (Html.BeginForm("EditCount", "Edit", FormMethod.Post))
+            {
+                @Html.Label("Количество в заказе")
+                <div class="block">
+                    <div>
+                        @if (Model.mode != "Open")
+                        {
+                            @Html.EditorFor(model => model.Count, new { htmlAttributes = new { @class = "form-control" } })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.Count, new { htmlAttributes = new { @class = "form-control" } })
+                        }
+
+                        @Html.ValidationMessageFor(model => model.Count, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(c => c.LOTID)
+                        @Html.HiddenFor(c => c.ProtocolID)
+                    </div>
+                    <div>
+                        @if (Model.mode != "Open")
+                        {
+                            <input type="submit" value="Сохранить" class="btn btn-success" />
+                        }
+                    </div>
+                    <div>
+                        @if (TempData["ErrC"] != null)
+                        {
+                            @Html.Label(TempData["ErrC"].ToString(), new { @style = "color:lightcoral; background-color: gray" })
+                        }
+                        else if (TempData["OKC"] != null)
+                        {
+                            @Html.Label(TempData["OKC"].ToString(), new { @style = "color:greenyellow; background-color: gray" })
+                        }
+                    </div>
+                </div>
+
+            }
+
+            @using (Html.BeginForm("EditTOPBOT", "Edit", FormMethod.Post))
+            {
+                @Html.Label("Сторона изделия")
+                <div class="block">
+                    <div>
+                        @if (Model.mode != "Open")
+                        {
+                            @Html.DropDownListFor(model => model.TOPBOTName, Model.TOPBOT, new { htmlAttributes = new { @class = "form-control", value = Model.TOPBOTName } })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.TOPBOTName, new { htmlAttributes = new { @class = "form-control", value = Model.TOPBOTName } })
+                        }
+
+                        @Html.ValidationMessageFor(model => model.Count, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(c => c.LOTID)
+                        @Html.HiddenFor(c => c.ProtocolID)
+                    </div>
+                    <div>
+                        @if (Model.mode != "Open")
+                        {
+                            <input type="submit" value="Сохранить" class="btn btn-success" />
+                        }
+                    </div>
+                    <div>
+                        @if (TempData["OKTOP"] != null)
+                        {
+                            @Html.Label(TempData["OKTOP"].ToString(), new { @style = "color:greenyellow; background-color: gray" })
+                        }
+                    </div>
+                </div>
+
+            }
+        </div>
+
+        <div class="TableStyle">
+            <table class="table">
+                <tr>
+                    <th id="head" colspan="5"> Документы </th>
+                </tr>
+                <tr>
+                    <th>
+                        Тип Документа
+                    </th>
+                    <th>
+                        Имя Документа
+                    </th>
+                    <th>
+                        Расширение файла
+                    </th>
+                    <th>
+                        Скачать документ
+                    </th>
+                    @if (Model.mode != "Open")
+                    {
+                        <th style="text-align: center;">
+                            Редактирование
+                        </th>
+                    }
+                </tr>
+                @foreach (var item in Model.ListDocs.OrderByDescending(c => c.Name))
+                {
+                    <tr>
+                        <td>
+                            @item.Name
+                        </td>
+
+                        @if (Model.mode != "Open")
+                        {                       
+                            <td>
+                                @Html.EditorFor(c => @item.NameFile, "", new { htmlAttributes = new { id = $"name{item.ID}", @class = "TBWidth" } })
+                            </td>
+                        }
+                        else
+                        {
+                             <td>
+                                @Html.DisplayFor(c => @item.NameFile, "", new { htmlAttributes = new { id = $"name{item.ID}", @class = "TBWidth" } })
+                            </td>
+                        }
+
+                        <td>
+                            @Html.DisplayFor(c=> item.Extension)
+                        </td>
+
+                        <td>
+                            <a class="btn btn-success" style="background-color:gray" href="@Url.Action("Download", new { path = item.Path, ContentType = item.ContentType, Name = item.NameFile, Extension = item.Extension })"> Скачать </a>
+                        </td>
+
+                        @if (Model.mode != "Open")
+                        {
+                            <td>
+                                @Html.Label("lb", "Сохранено", new { @id = $"status{item.ID}", @style = "opacity: 0;background-color:lightgreen" })
+                                @Html.Label(item.ID.ToString(), "Редактировать имя", new { @class = "btn btn-success", onclick = $"EditName({item.ID})" })
+                                @Html.Label(item.ID.ToString(), "Удалить", new { @class = "btn btn-success", @style = "background-color: lightcoral", onclick = $"RemoveTR(this,{item.ID})" })
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+        @if (Model.mode != "Open")
+        {       
+            using (Html.BeginForm("AddDocs","Edit",FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div style="padding:2%; border:1px solid gray;">
+                    @Html.HiddenFor(c => c.ProtocolID)
+                    @Html.HiddenFor(c => c.LOTID)
+                     @Html.HiddenFor(c => c.ClientName)
+                     @Html.HiddenFor(c => c.Order)
+
+                    <div>@Html.Label("Загрузка Спецификации к заказу")</div>
+                    <div class="BlockDocument">
+                        <div>
+                            <div>@Html.LabelFor(model => model.SpecificationBom, "Имя Спецификации-BOM", htmlAttributes: new { @class = "control-label " })</div>
+                            <div>@Html.TextBoxFor(model => model.SpecificationBom, new { @id = "SpecBOM", @style = "max-width: auto; width:500px;" })</div>
+                            <div>@Html.ValidationMessageFor(model => model.SpecificationBom, "", new { @class = "alert-danger" })</div>
+                        </div>
+                        <div>                      
+                            <div>
+                                <div>@Html.LabelFor(model => model.FileSpec, "Загрузить спецификацию", htmlAttributes: new { @class = "control-label " })</div>
+                                <div>@Html.TextBoxFor(model => Model.FileSpec, new { @type = "file", @name = "file", @id = "spec", onchange = "SetName(this)" })</div>
+                                <div>@Html.ValidationMessageFor(model => model.FileSpec, "", new { @class = "alert-danger" })</div>
+                            
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>@Html.Label("Добавить новый документ")</div>
+                    <div class="BlockDocument">
+                        <div>
+                            <div>@Html.Label("BOM")</div>
+                            <div>@Html.TextBoxFor(model => model.BOM, new { @type = "file", @name = "BOM", @id = "BOM", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+                            <div>@Html.ListBox("BOM", new SelectList(new List<string>()), new { id = $"LPBOM", @class = "list" }) </div>
+                        </div>
+
+                        <div>
+                            <div>@Html.Label("Gerbers")</div>
+                            <div>@Html.TextBoxFor(model => model.Gerbers, new { @type = "file", @name = "Gerbers", @id = "Gerbers", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+                            <div>@Html.ListBox("Gerbers", new SelectList(new List<string>()), new { id = $"LPGerbers", @class = "list" }) </div>
+                        </div>
+
+                        <div>
+                            <div>@Html.Label("PickPlace")</div>
+                            <div>@Html.TextBoxFor(model => model.PickPlace, new { @type = "file", @name = "PickPlace", @id = "PickPlace", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+                            <div>@Html.ListBox("PickPlace", new SelectList(new List<string>()), new { id = $"LPPickPlace", @class = "list" }) </div>
+                        </div>
+
+                        <div>
+                            <div>@Html.Label("AssemblyDrawings")</div>
+                            <div>@Html.TextBoxFor(model => model.AssemblyDrawings, new { @type = "file", @name = "AssemblyDrawings", @id = "AssemblyDrawings", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+                            <div>@Html.ListBox("AssemblyDrawings", new SelectList(new List<string>()), new { id = $"LPAssemblyDrawings", @class = "list" }) </div>
+                        </div>
+
+                        <div>
+                            <div>@Html.Label("Schematic")</div>
+                            <div>@Html.TextBoxFor(model => model.Schematic, new { @type = "file", @name = "Schematic", @id = "Schematic", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+                            <div>@Html.ListBox("Schematic", new SelectList(new List<string>()), new { id = $"LPSchematic", @class = "list" }) </div>
+                        </div>
+
+                        <div>
+                            <div>@Html.Label("FirmWare")</div>
+                            <div>@Html.TextBoxFor(model => model.Fireware, new { @type = "file", @name = "Fireware", @id = "Fireware", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+                            <div>@Html.ListBox("FirmWare", new SelectList(new List<string>()), new { id = $"LPFireware", @class = "list" }) </div>
+                        </div>
+                    </div>
+                        <input type="submit" value="Сохранить документы" class="btn btn-success"/>
+                    </div>
+            }
+        }
+
+        <div style="overflow-y: auto; max-height:700px;height:auto">
+            @Html.Action("GetTableProtocols","Work", new { LOTID = Model.LOTID })
+        </div>
+    </div>
+ 
+    
+    <div>
+        @Html.ActionLink("Назад", "Index","Work")
+    </div>
+</body>
+</html>
+
+<script src="~/Scripts/MyJava.js">
+
+</script>
+
+<script type="text/javascript">
+
+    function EditName(id) {       
+
+       var name =  document.getElementById("name" + id).value;
+
+        if (!confirm("Уверены, что хотите переименовать документ?")) return;
+             $.ajax({
+                url: '@Url.Action("RenameDocument", "Edit")',
+                dataType: "json",
+                data: { ID: id, name: name },
+                success: function (data) {
+                    if (data == true) {                        
+                        vis(id);
+                    }
+                    else {
+                        alert('Ошибка');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert(xhr + status + error);
+            }
+             });
+
+
+        }
+
+    function RemoveTR(line, id) {
+        if (!confirm("Уверены, что хотите удалить документ?")) return;
+
+        $.ajax({
+
+            url: '@Url.Action("RemoveDocument", "Edit")',
+            dataType: "json",
+            data: { ID: id },
+            success: function (data) {
+                if (data == true) {
+                    RemoveRow(line);
+                }
+                else {
+                    alert('Ошибка');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert(xhr + status + error);
+            }
+        });
+    }
+    
+    function vis(id) {
+        var fade = document.getElementById("status"+id); // get required element
+        fade.style.opacity = 1; // set opacity for the element to 1
+        var timerId = setInterval(function () { // start interval loop
+            var opacity = fade.style.opacity; // get current opacity
+            if (opacity == 0) { // check if its 0 yet
+                clearInterval(timerId); // if so, exit from interval loop
+            } else {
+                fade.style.opacity = opacity - 0.05; // else remove 0.05 from opacity
+            }
+        }, 250);
+    }
+
+    function RemoveRow(line) {
+        var tbl = line.parentNode.parentNode.parentNode;
+        var row = line.parentNode.parentNode.rowIndex;
+
+        tbl.deleteRow(row);
+    }
+</script>
+
+<style>
+
+    .TableStyle {
+        overflow-y: auto;
+        height: auto;
+        max-height: 700px;
+        margin-top:2%;
+    }
+
+        .TableStyle th {
+        }
+
+        .TableStyle tr {
+        }
+
+        .TableStyle td {
+        }
+
+        .TableStyle table {
+            background-color: beige;
+        }
+
+        .TableStyle #head {
+            text-align: center;
+            font-size: 20px;
+            background-color: lightgreen;
+        }
+</style>
