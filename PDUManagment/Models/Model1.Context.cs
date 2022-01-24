@@ -64,6 +64,8 @@ public partial class FASEntities : DbContext
 
     public virtual DbSet<EP_FileTypeMIME> EP_FileTypeMIME { get; set; }
 
+    public virtual DbSet<EP_Email> EP_Email { get; set; }
+
 }
 
 }

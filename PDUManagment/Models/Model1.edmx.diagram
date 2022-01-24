@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="536cb47be1ce4ecfb557c45761fd1215" Name="Diagram1" ZoomLevel="76">
+      <Diagram DiagramId="536cb47be1ce4ecfb557c45761fd1215" Name="Diagram1" ZoomLevel="75">
         <EntityTypeShape EntityType="FASModel.EP_Service" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_GS_LOTs" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Users" Width="1.5" PointX="0.75" PointY="4" IsExpanded="true" />
@@ -36,6 +36,8 @@
         <AssociationConnector Association="FASModel.EP_Serv_fk" />
         <AssociationConnector Association="FASModel.EP_Doc_fk" />
         <EntityTypeShape EntityType="FASModel.EP_FileTypeMIME" Width="1.5" PointX="5.375" PointY="3.75" />
+        <EntityTypeShape EntityType="FASModel.EP_Email" Width="1.5" PointX="13.375" PointY="0.75" />
+        <AssociationConnector Association="FASModel.FK__Contract___Сusto__7EE1CA6C" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

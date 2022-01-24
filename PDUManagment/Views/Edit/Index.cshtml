@@ -1,6 +1,6 @@
 ﻿@model PDUManagment.Classes.Create.CreateOrder
 
-@{ 
+@{
     string Value = "";
     string Color = "";
 
@@ -12,7 +12,7 @@
 
 <div>
     <div>
-        <h1>Пользователь @Session["Name"]</h1>
+        @*<h1>Пользователь @Session["Name"]</h1>*@
     </div>
     <div>
         <h2>Редактирование протокола</h2>
@@ -21,27 +21,28 @@
     </div>
 </div>
 
-<div style="margin-top:2%;">
-    @using (Html.BeginForm("CloseOpenLot", "Edit", FormMethod.Post))
-    {
-        @Html.HiddenFor(c => c.LOTID)
-        @Html.HiddenFor(c => c.IsActive)
+   @if(Model.mode != "Open")
+   {
+        <div style="margin-top:2%;">
+            @using (Html.BeginForm("CloseOpenLot", "Edit", FormMethod.Post))
+            {
+                @Html.HiddenFor(c => c.LOTID)
+                @Html.HiddenFor(c => c.IsActive)
 
-        if (Model.IsActive)
-        {
-            Value = "Закрыть_Заказ";
-            Color = "background-color: lightcoral;";
+                if (Model.IsActive)
+                {
+                    Value = "Закрыть_Заказ";
+                    Color = "background-color: lightcoral;";
+                }
+                else
+                {
+                    Value = "Открыть_Заказ";
+                    Color = "";
+                }
+                <input type="submit" value=@Value class="btn btn-success" style="@Color max-width:150px; height:auto " />
+            }
+        </div>
         }
-        else
-        {
-            Value = "Открыть_Заказ";
-            Color = "";
-
-        }
-
-        <input type="submit" value=@Value class="btn btn-success" style="@Color max-width:150px; height:auto "  />
-    }
-</div>
 
 <html>
 <head>
@@ -50,8 +51,8 @@
 </head>
 <body>
 
-        @Html.AntiForgeryToken()
-        
+    @Html.AntiForgeryToken()
+
     <div class="MyForm">
         <div style="background-color: lightgray; border:1px dashed gray">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -60,20 +61,21 @@
             {
                 @Html.Label("Имя Заказа")
                 <div class="block">
-                    <div>
+                    <div style="max-width: 600px; width:600px">
 
                         @if (Model.mode != "Open")
                         {
-                            @Html.EditorFor(model => model.Order, new { htmlAttributes = new { @class = "form-control" ,@style="max-width: 300px; width:auto" } })
+                            @Html.TextBoxFor(model => model.Order, new { @class = "form-control", @style = "max-width: 600px; width:max" })
                         }
                         else
                         {
-                            @Html.DisplayFor(model => model.Order, new { htmlAttributes = new { @class = "form-control", @style = "max-width: 300px; width:auto" } })
+                            @Html.DisplayFor(model => model.Order, new { htmlAttributes = new { @class = "form-control", @style = "max-width: 600px; width:auto" } })
                         }
 
                         @Html.ValidationMessageFor(model => model.Order, "", new { @class = "text-danger" })
+
                         @Html.HiddenFor(c => c.LOTID)
-                        @Html.HiddenFor(c => c.ProtocolID)
+                        @*@Html.HiddenFor(c => c.ProtocolID)*@
                     </div>
                     <div>
                         @if (Model.mode != "Open")
@@ -111,7 +113,7 @@
 
                         @Html.ValidationMessageFor(model => model.Count, "", new { @class = "text-danger" })
                         @Html.HiddenFor(c => c.LOTID)
-                        @Html.HiddenFor(c => c.ProtocolID)
+                        @*@Html.HiddenFor(c => c.ProtocolID)*@
                     </div>
                     <div>
                         @if (Model.mode != "Open")
@@ -149,7 +151,7 @@
 
                         @Html.ValidationMessageFor(model => model.Count, "", new { @class = "text-danger" })
                         @Html.HiddenFor(c => c.LOTID)
-                        @Html.HiddenFor(c => c.ProtocolID)
+                        @*@Html.HiddenFor(c => c.ProtocolID)*@
                     </div>
                     <div>
                         @if (Model.mode != "Open")
@@ -201,20 +203,20 @@
                         </td>
 
                         @if (Model.mode != "Open")
-                        {                       
+                        {
                             <td>
                                 @Html.EditorFor(c => @item.NameFile, "", new { htmlAttributes = new { id = $"name{item.ID}", @class = "TBWidth" } })
                             </td>
                         }
                         else
                         {
-                             <td>
+                            <td>
                                 @Html.DisplayFor(c => @item.NameFile, "", new { htmlAttributes = new { id = $"name{item.ID}", @class = "TBWidth" } })
                             </td>
                         }
 
                         <td>
-                            @Html.DisplayFor(c=> item.Extension)
+                            @Html.DisplayFor(c => item.Extension)
                         </td>
 
                         <td>
@@ -234,34 +236,42 @@
             </table>
         </div>
         @if (Model.mode != "Open")
-        {       
-            using (Html.BeginForm("AddDocs","Edit",FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            using (Html.BeginForm("AddDocs", "Edit", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 <div style="padding:2%; border:1px solid gray;">
-                    @Html.HiddenFor(c => c.ProtocolID)
+                    @*@Html.HiddenFor(c => c.ProtocolID)*@
                     @Html.HiddenFor(c => c.LOTID)
-                     @Html.HiddenFor(c => c.ClientName)
-                     @Html.HiddenFor(c => c.Order)
+                    @Html.HiddenFor(c => c.ClientName)
+                    @Html.HiddenFor(c => c.Order)
 
                     <div>@Html.Label("Загрузка Спецификации к заказу")</div>
                     <div class="BlockDocument">
+                      
+
                         <div>
                             <div>@Html.LabelFor(model => model.SpecificationBom, "Имя Спецификации-BOM", htmlAttributes: new { @class = "control-label " })</div>
                             <div>@Html.TextBoxFor(model => model.SpecificationBom, new { @id = "SpecBOM", @style = "max-width: auto; width:500px;" })</div>
                             <div>@Html.ValidationMessageFor(model => model.SpecificationBom, "", new { @class = "alert-danger" })</div>
                         </div>
-                        <div>                      
+                        <div>
                             <div>
                                 <div>@Html.LabelFor(model => model.FileSpec, "Загрузить спецификацию", htmlAttributes: new { @class = "control-label " })</div>
                                 <div>@Html.TextBoxFor(model => Model.FileSpec, new { @type = "file", @name = "file", @id = "spec", onchange = "SetName(this)" })</div>
                                 <div>@Html.ValidationMessageFor(model => model.FileSpec, "", new { @class = "alert-danger" })</div>
-                            
+
                             </div>
                         </div>
                     </div>
 
                     <div>@Html.Label("Добавить новый документ")</div>
                     <div class="BlockDocument">
+                        <div>
+                            <div>@Html.Label("Заявка")</div>
+                            <div>@Html.TextBoxFor(model => model.BlankOrder, new { @type = "file", @name = "Заявка", @id = "Заявка", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+                            <div>@Html.ListBox("Заявка", new SelectList(new List<string>()), new { id = $"LPЗаявка", @class = "list" }) </div>
+                        </div>
+
                         <div>
                             <div>@Html.Label("BOM")</div>
                             <div>@Html.TextBoxFor(model => model.BOM, new { @type = "file", @name = "BOM", @id = "BOM", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
@@ -298,19 +308,19 @@
                             <div>@Html.ListBox("FirmWare", new SelectList(new List<string>()), new { id = $"LPFireware", @class = "list" }) </div>
                         </div>
                     </div>
-                        <input type="submit" value="Сохранить документы" class="btn btn-success"/>
-                    </div>
+                    <input type="submit" value="Сохранить документы" class="btn btn-success" />
+                </div>
             }
         }
 
         <div style="overflow-y: auto; max-height:700px;height:auto">
-            @Html.Action("GetTableProtocols","Work", new { LOTID = Model.LOTID })
+            @Html.Action("GetTableProtocols", "Work", new { LOTID = Model.LOTID })
         </div>
     </div>
- 
-    
+
+
     <div>
-        @Html.ActionLink("Назад", "Index","Work")
+        @Html.ActionLink("Назад", "Index", "Work")
     </div>
 </body>
 </html>
@@ -321,7 +331,7 @@
 
 <script type="text/javascript">
 
-    function EditName(id) {       
+    function EditName(id) {
 
        var name =  document.getElementById("name" + id).value;
 
@@ -331,7 +341,7 @@
                 dataType: "json",
                 data: { ID: id, name: name },
                 success: function (data) {
-                    if (data == true) {                        
+                    if (data == true) {
                         vis(id);
                     }
                     else {
@@ -367,7 +377,7 @@
             }
         });
     }
-    
+
     function vis(id) {
         var fade = document.getElementById("status"+id); // get required element
         fade.style.opacity = 1; // set opacity for the element to 1
@@ -395,7 +405,7 @@
         overflow-y: auto;
         height: auto;
         max-height: 700px;
-        margin-top:2%;
+        margin-top: 2%;
     }
 
         .TableStyle th {

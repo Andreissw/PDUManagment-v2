@@ -19,8 +19,17 @@ namespace PDUManagment.Controllers
             return View();
         }
 
-        public ActionResult GetUserID(User user)
+        public ActionResult GetUserID(User user, bool Loggin)
         {
+            if (!Loggin)
+            {
+                Session["Service"] = 0;
+                Session["RFID"] = 0;
+                Session["Name"] = 0;
+                Session["UsID"] = 0;
+                return RedirectToAction("Index", "Work");
+            }
+
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Не верно введены данные");

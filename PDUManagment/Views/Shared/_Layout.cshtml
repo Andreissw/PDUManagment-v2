@@ -9,8 +9,22 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>    
+    <div>
+     
+
+      
+    </div>
     <div class="container body-content">
-        @RenderBody()      
+
+        @if (Session["Name"] != null)
+        {
+            if (Session["Name"].ToString() != "0")
+            {
+                <h3>Пользователь: @Session["Name"].ToString()</h3>
+            }
+        }
+
+        @RenderBody()
     </div>
 
     @Scripts.Render("~/bundles/jquery")

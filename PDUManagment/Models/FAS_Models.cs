@@ -43,6 +43,8 @@ public partial class FAS_Models
 
     public Nullable<short> ChipCode { get; set; }
 
+    public Nullable<int> CustomerID { get; set; }
+
 
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

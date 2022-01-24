@@ -1,6 +1,8 @@
 ﻿@model PDUManagment.Classes.Create.CreateOrder
 <link rel="stylesheet" href="~/Content/MyStyle.css" />
-<h3>Пользователь @Session["Name"]</h3>
+@*<h3>Пользователь @Session["Name"]</h3>*@
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+
 
 @if (TempData["Er"] != null)
 {
@@ -18,17 +20,18 @@
     <hr />
 
     <div class="block">
-        <div>
-            <div>@Html.LabelFor(model => model.ClientType, "Вид заказчика", htmlAttributes: new { @class = "control-label " })</div>
-            <div>@Html.DropDownListFor(model => model.ClientType, Model.TypeClient, htmlAttributes: new { @class = "form-control", @id = "Client", style = "max-width:200px; width:200px;", onchange = "getVisible(value)" })</div>
-            <div>@Html.ValidationMessageFor(model => model.ClientType, "", new { @class = "alert-danger" })</div>
 
-        </div>
+
         <div id="OrderDiv">
-            <div> @Html.LabelFor(model => model.ClientName, "Заказчик", htmlAttributes: new { @class = "control-label " })</div>
-            <div>@Html.DropDownListFor(model => model.ClientName, Model.Client, htmlAttributes: new { @class = "form-control", style = "max-width:200px; width:200px;" })  </div>
+            <div> @Html.Label("Заказчик", htmlAttributes: new { @class = "control-label " })</div>
+            <div>@Html.DropDownListFor(model => model.ClientName, Model.Client, htmlAttributes: new { @class = "form-control", style = "max-width:400px; width:400;",@id = "Clients", onchange = "getVisible(value)" })  </div>
             <div>@Html.ValidationMessageFor(model => model.ClientName, "", new { @class = "alert-danger" })</div>
+        </div>
 
+        <div>
+            <div>@Html.Label("Модель", htmlAttributes: new { @class = "control-label " })</div>
+            <div>@Html.DropDownListFor(model => model.Modelname, Model.ListModel, htmlAttributes: new { @class = "form-control", @id = "Model", style = "max-width:200px; width:200px;" })</div>
+            <div>@Html.ValidationMessageFor(model => model.Modelname, "", new { @class = "alert-danger" })</div>
         </div>
     </div>
 
@@ -36,6 +39,12 @@
         <div>@Html.LabelFor(model => model.Order, "Имя заказа", htmlAttributes: new { @class = "control-label " })</div>
         <div>@Html.EditorFor(model => model.Order, new { htmlAttributes = new { @class = "form-control" } })</div>
         <div>@Html.ValidationMessageFor(model => model.Order, "", new { @class = "alert-danger" })</div>
+    </div>
+
+    <div class="HorizForm">
+        <div>@Html.LabelFor(model => model.LotCode, "Номер Лота", htmlAttributes: new { @class = "control-label " })</div>
+        <div>@Html.EditorFor(model => model.LotCode, new { htmlAttributes = new { @class = "form-control" } })</div>
+        <div>@Html.ValidationMessageFor(model => model.LotCode, "", new { @class = "alert-danger" })</div>
     </div>
 
 
@@ -47,7 +56,7 @@
 
     <div class="HorizForm">
         <div>@Html.LabelFor(model => model.Date, "Выбрать дату выпуска заказа", htmlAttributes: new { @class = "control-label " })</div>
-        <div>@Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })</div>     
+        <div>@Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })</div>
         <div>@Html.ValidationMessageFor(model => model.Date, "", new { @class = "alert-danger" })</div>
     </div>
 
@@ -76,6 +85,11 @@
 
     <div>@Html.Label("Загрузка документов к заказу (*не обязательное поле)")</div>
     <div class="BlockDocument">
+        <div>
+            <div>@Html.Label("Заявка")</div>
+            <div>@Html.TextBoxFor(model => model.BlankOrder, new { @type = "file", @name = "Заявка", @id = "Заявка", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
+            <div>@Html.ListBox("Заявка", new SelectList(new List<string>()), new { id = $"LPЗаявка", @class = "list" }) </div>
+        </div>
         <div>
             <div>@Html.Label("BOM")</div>
             <div>@Html.TextBoxFor(model => model.BOM, new { @type = "file", @name = "BOM", @id = "BOM", @multiple = "multiple", onchange = "AddList(this,id)" })</div>
@@ -135,9 +149,58 @@
 
 
 
-<script src="~/Scripts/MyJava.js">
+<script>
 
- 
+    $(document).on('invalid-form.validate', 'form', function () {
+        var button = $(this).find(':submit');
+        setTimeout(function () {
+            button.removeAttr('disabled');
+        }, 1);
+    });
+    $(document).on('submit', 'form', function () {
+        var button = $(this).find(':submit');
+        setTimeout(function () {
+            button.attr('disabled', 'disabled');
+        }, 0);
+    });
+
+    $(document).ready(function () {    
+        getVisible($("#Clients").val())
+    });
+
+ function AddList(object, name) {
+    var list = $("#LP" + name);
+
+    $("#LP" + name + " option").remove();
+
+    for (const item of object.files) {
+        list.append('<option>' + item.name + '</option>');
+    }
+
+}
+
+function SetName(object) {
+
+    $("#SpecBOM").val(object.files[0].name);
+
+}
+
+function getVisible(value) {
+
+    $.ajax({
+        url: '@Url.Action("GetListModels", "CreateLOT")',
+        dataType: "json",
+        data: { Name: value },
+        success: function (data) {
+            var m = $("#Model");
+            m.empty();
+            $.each(data, function () {
+               m.append($("<option></option>").val(this['Value']).html(this['Text']))
+            })
+        },
+    })
+
+}
 
 </script>
 

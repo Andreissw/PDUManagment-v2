@@ -38,6 +38,8 @@ public partial class EP_ProtocolsInfo
 
     public string Description { get; set; }
 
+    public Nullable<short> Itter { get; set; }
+
 
 
     public virtual EP_Protocols EP_Protocols { get; set; }

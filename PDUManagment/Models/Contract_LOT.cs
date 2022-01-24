@@ -68,7 +68,7 @@ public partial class Contract_LOT
 
     public Nullable<bool> HexFasSN { get; set; }
 
-    public Nullable<int> СustomersID { get; set; }
+    public int СustomersID { get; set; }
 
     public Nullable<int> LOTSize { get; set; }
 
@@ -77,6 +77,10 @@ public partial class Contract_LOT
     public string FASNumberFormat2 { get; set; }
 
     public Nullable<System.DateTime> DateManufacter { get; set; }
+
+
+
+    public virtual CT_Сustomers CT_Сustomers { get; set; }
 
 }
 

@@ -34,6 +34,8 @@ public partial class EP_Doc
 
     public string extension { get; set; }
 
+    public int LOTID { get; set; }
+
 
 
     public virtual EP_Protocols EP_Protocols { get; set; }

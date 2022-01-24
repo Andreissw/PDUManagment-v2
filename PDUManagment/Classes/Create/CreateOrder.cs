@@ -21,14 +21,22 @@ namespace PDUManagment.Classes.Create
         [Required]        
         [Min(10)]
         public int Count { get; set; }
-        public string mode { get; set; }
-        public List<SelectListItem> TypeClient { get; set; }       
-        [Required]
+        public string mode { get; set; }     
+
         public string ClientType { get; set; }
 
         public bool IsActive { get; set; }
         public List<SelectListItem> Client { get; set; }
+
+        [Required]
+        public string Modelname { get; set; }
+
+        [Required]
         public string ClientName { get; set; }
+
+        [Required]
+        public int LotCode { get; set; }
+
         [Required, MinLength(5)]
         public string SpecificationBom { get; set; }
         [MinLength(5)]
@@ -36,6 +44,8 @@ namespace PDUManagment.Classes.Create
         public string DocumentPath { get; set; }     
         [Required]
         public HttpPostedFileBase FileSpec { get; set; }
+
+        public List<HttpPostedFileBase> BlankOrder { get; set; }
         public List<HttpPostedFileBase> BOM { get; set; }
         public List<HttpPostedFileBase> Gerbers { get; set; }
         public List<HttpPostedFileBase> PickPlace { get; set; }
@@ -52,7 +62,7 @@ namespace PDUManagment.Classes.Create
 
                 EP_Log log = new EP_Log()
                 {
-                    IDProtocol = ProtocolID,
+                    //IDProtocol = ProtocolID,
                     UserID = (short)UserID,
                     ServiceID = GetServiceID(),
                     Date = DateTime.UtcNow.AddHours(2),
@@ -66,11 +76,6 @@ namespace PDUManagment.Classes.Create
                 fas.EP_Log.Add(log);
                 fas.SaveChanges();
             }
-        }
-
-        public void IdentifyClient()
-        {
-            ClientName = ClientType == "ВЛВ" ? "ВЛВ" : ClientName;
         }
 
         public void SaveDoc(List<DocumentFile> Files)
@@ -113,21 +118,42 @@ namespace PDUManagment.Classes.Create
             ListDoc.Add(new DocData() { Path = _pathSpec, Name = "Спецификация", ContentType = contentType, NameFile = name, Extension = fileextresion });           
         }
 
-
-
         public void CheckFolder()
         {
             string PathObmen = @"\\192.168.180.9\ProdSoft\PDUManagment\";
-            //string PathObmen = @"\\192.168.180.9\ProdSoft\PDUManagment\";
-            CheckFolder(PathObmen + ClientName);
-            CheckFolder(PathObmen + ClientName + "\\" + Order);
-            _path = PathObmen + ClientName + "\\" + Order + "\\";
+            //string PathObmen = @"\\s-fs-cts\Obmen\Производство\Производственный_заказ\";
+            var path = CheckFolder(PathObmen + ClientName);
+            path = CheckFolder(path + "\\" + Date.Year);
+            path = CheckFolder(path + "\\" + Date.ToString("MM_MMMM"));
+            path = CheckFolder(path + "\\" + Order);
+            _path = path + "\\";
         }
 
-        void CheckFolder(string Path)
+        public string CheckFolderArchive(string _path)
+        {            
+            var path = _path.Substring(0, _path.LastIndexOf("\\"));
+            path = path + "\\" + "Архив";
+            path = CheckFolder(path);
+            path = path + _path.Substring(_path.LastIndexOf("\\"));
+            File.Move(_path, path);
+            return path;
+        }
+
+
+        string CheckFolder(string Path)
         {
+            //if (!Directory.Exists(Path))
+            //    Directory.CreateDirectory(Path);
+
             if (!Directory.Exists(Path))
-                Directory.CreateDirectory(Path);
+                new DirectoryInfo(Path).Create();
+
+
+
+            //DirectoryInfo directoryInfo = new DirectoryInfo(Path);
+            //directoryInfo.cr
+
+            return Path;
         }
 
 
@@ -139,7 +165,7 @@ namespace PDUManagment.Classes.Create
             {
                 EP_Doc doc = new EP_Doc()
                 {
-                    IDProtocol = ProtocolID,
+                    LOTID = LOTID,
                     Name = docData.Name,
                     Path = docData.Path,
                     ContentType = docData.ContentType,

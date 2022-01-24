@@ -14,12 +14,17 @@ namespace PDUManagment
     {
         public int UserID { get; set; }
         public int LOTID { get; set; }
-        public int ProtocolID { get; set; }
+        //public int ProtocolID { get; set; }
+
+        public List<int> ListProtocolID { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd'/'MM'/'yyyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Дата выпуска продукции")]
         public DateTime Date { get; set; }
+
+       
+        public List<SelectListItem> ListModel { get; set; }
 
         [Required]
         public string Order { get; set; }
@@ -43,10 +48,11 @@ namespace PDUManagment
            
         }
 
-        public void GeneratePGName()
+        public void GeneratePGName(int protocolID)
         {
             using (var fas = new FASEntities())
             {
+               
                 var listlots = fas.FAS_GS_LOTs.Select(c => new LotsInfo
                 {
                     LOTID = c.LOTID,
@@ -68,7 +74,9 @@ namespace PDUManagment
 
                 }));
 
-                var name = listlots.Where(c => c.LOTID == LOTID).Select(c => ProtocolID + "_SP_" + c.LotCode + "_" + c.ModelName).FirstOrDefault().Replace(" ", "_");
+                var line = fas.EP_Protocols.Where(c => c.ID == protocolID).Select(c => c.Line).FirstOrDefault();
+
+                var name = listlots.Where(c => c.LOTID == LOTID).Select(c => line + "_" +protocolID + "_SP_" + c.LotCode + "_" + c.ModelName).FirstOrDefault().Replace(" ", "_");
 
                 var lsitbtobbot =  new List<string> { "TOP", "BOT" };
 
@@ -78,7 +86,7 @@ namespace PDUManagment
                     if (item == " BOT")
                         visible = GetTopBot(TOPBOTName);
 
-                    var ListPG = fas.EP_Machine.Select(c => new { Name = name +"_"+ c.Name +"_"+ item, IDMachine = c.ID, Type = item, IDProtocol = ProtocolID }).ToList();
+                    var ListPG = fas.EP_Machine.Select(c => new { Name = name +"_"+ item, IDMachine = c.ID, Type = item, IDProtocol = protocolID }).ToList();
 
                     List<EP_PGName> eP_PGName = new List<EP_PGName>();
                     foreach (var i in ListPG)
@@ -97,12 +105,13 @@ namespace PDUManagment
 
                     fas.EP_PGName.AddRange(eP_PGName); fas.SaveChanges();
                 }
-
+               
             }
         }
 
-        public void CreateProtocol()
+        public void CreateProtocol( byte line)
         {
+            
             using (var fas = new FASEntities())
             {
                 var isTOPBOT = GetTopBot(TOPBOTName);
@@ -116,12 +125,14 @@ namespace PDUManagment
                     StartStatusTOP = false,
                     StartStatusBOT = false,
                     NameProtocol = ProtocolName,
+                    Line = line,
                     //ProgrammName = CreateOrder.ProgrammName,
                 };
 
                 fas.EP_Protocols.Add(ep);
-                fas.SaveChanges();
-                ProtocolID = fas.EP_Protocols.OrderByDescending(c => c.DateCreate).FirstOrDefault().ID;
+                fas.SaveChanges();                
+                ListProtocolID.Add(ep.ID);
+
                 IsTOPBOT = (bool)ep.TOPBOT;
             }
         }
@@ -142,14 +153,14 @@ namespace PDUManagment
        
         }
 
-        public void AddInfo()
+        public void AddInfo(int protocolID)
         {
             using (var fas = new FASEntities())
             {
-                var IdList = fas.EP_TypeVerification.OrderBy(c => c.Manufacter).ThenBy(c => c.Num).Where(c => c.Manufacter != "Цех поверхностного монтажа").ToList();
+                var IdList = fas.EP_TypeVerification.OrderBy(c => c.Manufacter).ThenBy(c => c.Num).Where(c => c.Manufacter == "Цех Сборки").ToList();
                 addinfo(IdList);
 
-                IdList = fas.EP_TypeVerification.OrderBy(c => c.Manufacter).ThenBy(c => c.Num).Where(c => c.Manufacter == "Цех поверхностного монтажа").ToList();
+                IdList = fas.EP_TypeVerification.OrderBy(c => c.Manufacter).ThenBy(c => c.Num).Where(c => c.Manufacter != "Цех Сборки").ToList();
 
                 foreach (var item in new List<string>() { "TOP", "BOT" })
                     addinfo(IdList, item);
@@ -157,10 +168,10 @@ namespace PDUManagment
 
                 void addinfo(List<EP_TypeVerification> list, string TOP = "TOP")
                 {
-                    bool vis = true;
+                    //bool vis = true;
 
-                    if (TOP == "BOT")                 
-                        vis = IsTOPBOT == true ? true : false;
+                    //if (TOP == "BOT")                 
+                    //    vis = IsTOPBOT == true ? true : false;
                   
 
                     foreach (var item in list)
@@ -169,10 +180,11 @@ namespace PDUManagment
                         {
                             TypeVerifID = item.ID,
                             DateCreate = DateTime.UtcNow.AddHours(2),
-                            ProtocolID = ProtocolID,
+                            ProtocolID = protocolID,
                             Signature = false,
                             TOPBOT = TOP,
-                            Visible = vis,
+                            Visible = false,
+                            Itter = 1,
                         };
 
                         fas.EP_ProtocolsInfo.Add(INFO);

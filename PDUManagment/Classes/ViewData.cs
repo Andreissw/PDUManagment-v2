@@ -15,5 +15,7 @@ namespace PDUManagment.Classes
 
         public bool IsActive { get; set; }
         public DateTime DateCreate { get; set; }
+
+        public DateTime DateManufacter { get; set; }
     }
 }

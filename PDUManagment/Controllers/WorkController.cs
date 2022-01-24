@@ -21,7 +21,12 @@ namespace PDUManagment.Controllers
         List<SelectListItem> ListTOPBOT = new List<SelectListItem>() { new SelectListItem() { Text = "" }, new SelectListItem() { Text = "TOP" }, new SelectListItem() { Text = "TOP/BOT" }, };
 
         public ActionResult Index()
-        {            
+        {
+            if (@Session["Name"] == null)
+            {
+                return RedirectToAction("Index","Home");
+            }
+
             return View();
         }
 
@@ -64,7 +69,7 @@ namespace PDUManagment.Controllers
                 tables.Add(table);
             }
 
-            return View(tables);
+            return View(tables.OrderByDescending(c=>c.DateCreate));
         }
        
         public ActionResult GetTableProtocols(int LOTID)

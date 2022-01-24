@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Http.Controllers;
 using System.Web.Mvc;
 
 namespace PDUManagment.Util
 {
     public class PreventSpamAttribute : ActionFilterAttribute
     {  //This stores the time between Requests (in seconds)
-        public int DelayRequest = 10;
-        //The Error Message that will be displayed in case of excessive Requests
-        public string ErrorMessage = "Excessive Request Attempts Detected.";
-        //This will store the URL to Redirect errors to
-        public string RedirectURL;
+       public int DelayRequest = 10;
+       //The Error Message that will be displayed in case of excessive Requests
+       public string ErrorMessage = "Excessive Request Attempts Detected.";
+       //This will store the URL to Redirect errors to
+       public string RedirectURL;
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -25,7 +28,9 @@ namespace PDUManagment.Util
             var cache = filterContext.HttpContext.Cache;
 
             //Grab the IP Address from the originating Request (very simple implementation for example purposes)
-            var originationInfo = request.ServerVariables["HTTP_X_FORWARDED_FOR"] ?? request.UserHostAddress;
+            //var originationInfo = request.ServerVariables["HTTP_X_FORWARDED_FOR"] ?? request.UserHostAddress;
+
+            var originationInfo = GetIPAddress() ?? request.UserHostAddress;
 
             //Append the User Agent
             originationInfo += request.UserAgent;
@@ -51,5 +56,23 @@ namespace PDUManagment.Util
 
             base.OnActionExecuting(filterContext);
         }
+
+        public string GetIPAddress()
+        {
+            System.Web.HttpContext context = System.Web.HttpContext.Current;
+            string ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+
+            if (!string.IsNullOrEmpty(ipAddress))
+            {
+                string[] addresses = ipAddress.Split(',');
+                if (addresses.Length != 0)
+                {
+                    return addresses[0];
+                }
+            }
+
+            return context.Request.ServerVariables["REMOTE_ADDR"];
+        }
+
     }
 }

@@ -31,7 +31,7 @@ namespace PDUManagment.Classes.Create
 
                 EP_Log log = new EP_Log()
                 {
-                    IDProtocol = ProtocolID,
+                    //IDProtocol = ProtocolID,
                     UserID = (short)UserID,
                     ServiceID = GetServiceID(),
                     Date = DateTime.UtcNow.AddHours(2),                    

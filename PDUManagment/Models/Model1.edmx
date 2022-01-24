@@ -34,7 +34,7 @@
           <Property Name="ParseLog" Type="bit" />
           <Property Name="StepSequence" Type="nvarchar" MaxLength="50" />
           <Property Name="HexFasSN" Type="bit" />
-          <Property Name="СustomersID" Type="int" />
+          <Property Name="СustomersID" Type="int" Nullable="false" />
           <Property Name="LOTSize" Type="int" />
           <Property Name="LOT_Shipped" Type="int" />
           <Property Name="FASNumberFormat2" Type="nvarchar" MaxLength="150" />
@@ -60,6 +60,16 @@
           <Property Name="ContentType" Type="nvarchar" MaxLength="200" />
           <Property Name="NameFile" Type="nvarchar" MaxLength="150" />
           <Property Name="extension" Type="nvarchar" MaxLength="10" />
+          <Property Name="LOTID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EP_Email">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="200" />
+          <Property Name="Type" Type="nvarchar" MaxLength="50" />
+          <Property Name="NameAdress" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="EP_FileTypeMIME">
           <Key>
@@ -118,6 +128,7 @@
           <Property Name="StartStatusBOT" Type="bit" />
           <Property Name="NameProtocol" Type="nvarchar" MaxLength="100" />
           <Property Name="IsActiveBOT" Type="bit" Nullable="false" />
+          <Property Name="Line" Type="tinyint" />
         </EntityType>
         <EntityType Name="EP_ProtocolsInfo">
           <Key>
@@ -133,6 +144,7 @@
           <Property Name="TOPBOT" Type="nvarchar" MaxLength="10" />
           <Property Name="Visible" Type="bit" />
           <Property Name="Description" Type="nvarchar" MaxLength="500" />
+          <Property Name="Itter" Type="smallint" />
         </EntityType>
         <EntityType Name="EP_Result">
           <Key>
@@ -179,21 +191,21 @@
           <Property Name="Specification" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ModelID" Type="smallint" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
-          <Property Name="IsHDCPUpload" Type="bit" Nullable="false" />
-          <Property Name="IsCertUpload" Type="bit" Nullable="false" />
-          <Property Name="IsMACUpload" Type="bit" Nullable="false" />
-          <Property Name="WorkingScenarioID" Type="tinyint" Nullable="false" />
-          <Property Name="LabelScenarioID" Type="tinyint" Nullable="false" />
-          <Property Name="LiterIndex" Type="int" Nullable="false" />
-          <Property Name="BoxCapacity" Type="int" Nullable="false" />
-          <Property Name="PalletCapacity" Type="int" Nullable="false" />
+          <Property Name="IsHDCPUpload" Type="bit" />
+          <Property Name="IsCertUpload" Type="bit" />
+          <Property Name="IsMACUpload" Type="bit" />
+          <Property Name="WorkingScenarioID" Type="tinyint" />
+          <Property Name="LabelScenarioID" Type="tinyint" />
+          <Property Name="LiterIndex" Type="int" />
+          <Property Name="BoxCapacity" Type="int" />
+          <Property Name="PalletCapacity" Type="int" />
           <Property Name="Manufacturer" Type="nvarchar" MaxLength="5" />
           <Property Name="Operator" Type="nvarchar" MaxLength="10" />
           <Property Name="MarketID" Type="nvarchar" MaxLength="15" />
           <Property Name="PTID" Type="nvarchar" MaxLength="2" />
-          <Property Name="ModelCheck" Type="bit" Nullable="false" />
-          <Property Name="SWRead" Type="bit" Nullable="false" />
-          <Property Name="SWGS1Read" Type="bit" Nullable="false" />
+          <Property Name="ModelCheck" Type="bit" />
+          <Property Name="SWRead" Type="bit" />
+          <Property Name="SWGS1Read" Type="bit" />
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="CreateByID" Type="smallint" Nullable="false" />
           <Property Name="CloseDate" Type="datetime" />
@@ -206,8 +218,8 @@
           <Property Name="FixedRG" Type="bit" />
           <Property Name="StartDate" Type="date" />
           <Property Name="SWVersion" Type="nvarchar" MaxLength="50" />
-          <Property Name="IsBunch" Type="bit" Nullable="false" />
-          <Property Name="IsWeighingPackage" Type="bit" Nullable="false" />
+          <Property Name="IsBunch" Type="bit" />
+          <Property Name="IsWeighingPackage" Type="bit" />
           <Property Name="FakePackage" Type="bit" />
           <Property Name="FakeBoxNum" Type="int" />
           <Property Name="FakePalletNum" Type="int" />
@@ -226,6 +238,7 @@
           <Property Name="BotMask" Type="nvarchar" MaxLength="15" />
           <Property Name="lenHDCP" Type="smallint" />
           <Property Name="ChipCode" Type="smallint" />
+          <Property Name="CustomerID" Type="int" />
         </EntityType>
         <EntityType Name="FAS_Users">
           <Key>
@@ -382,6 +395,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Contract___Сusto__7EE1CA6C">
+          <End Role="CT_Сustomers" Type="Self.CT_Сustomers" Multiplicity="1" />
+          <End Role="Contract_LOT" Type="Self.Contract_LOT" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CT_Сustomers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Contract_LOT">
+              <PropertyRef Name="СustomersID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_FAS_GS_LOTs_FAS_Models">
           <End Role="FAS_Models" Type="Self.FAS_Models" Multiplicity="1" />
           <End Role="FAS_GS_LOTs" Type="Self.FAS_GS_LOTs" Multiplicity="*" />
@@ -422,6 +447,7 @@
           <EntitySet Name="Contract_LOT" EntityType="Self.Contract_LOT" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CT_Сustomers" EntityType="Self.CT_Сustomers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EP_Doc" EntityType="Self.EP_Doc" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EP_Email" EntityType="Self.EP_Email" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EP_FileTypeMIME" EntityType="Self.EP_FileTypeMIME" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EP_Log" EntityType="Self.EP_Log" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EP_Machine" EntityType="Self.EP_Machine" Schema="dbo" store:Type="Tables" />
@@ -483,6 +509,10 @@
             <End Role="FAS_Users" EntitySet="FAS_Users" />
             <End Role="EP_ProtocolsInfo" EntitySet="EP_ProtocolsInfo" />
           </AssociationSet>
+          <AssociationSet Name="FK__Contract___Сusto__7EE1CA6C" Association="Self.FK__Contract___Сusto__7EE1CA6C">
+            <End Role="CT_Сustomers" EntitySet="CT_Сustomers" />
+            <End Role="Contract_LOT" EntitySet="Contract_LOT" />
+          </AssociationSet>
           <AssociationSet Name="FK_FAS_GS_LOTs_FAS_Models" Association="Self.FK_FAS_GS_LOTs_FAS_Models">
             <End Role="FAS_Models" EntitySet="FAS_Models" />
             <End Role="FAS_GS_LOTs" EntitySet="FAS_GS_LOTs" />
@@ -519,21 +549,21 @@
           <Property Name="Specification" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ModelID" Type="Int16" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="IsHDCPUpload" Type="Boolean" Nullable="false" />
-          <Property Name="IsCertUpload" Type="Boolean" Nullable="false" />
-          <Property Name="IsMACUpload" Type="Boolean" Nullable="false" />
-          <Property Name="WorkingScenarioID" Type="Byte" Nullable="false" />
-          <Property Name="LabelScenarioID" Type="Byte" Nullable="false" />
-          <Property Name="LiterIndex" Type="Int32" Nullable="false" />
-          <Property Name="BoxCapacity" Type="Int32" Nullable="false" />
-          <Property Name="PalletCapacity" Type="Int32" Nullable="false" />
+          <Property Name="IsHDCPUpload" Type="Boolean" />
+          <Property Name="IsCertUpload" Type="Boolean" />
+          <Property Name="IsMACUpload" Type="Boolean" />
+          <Property Name="WorkingScenarioID" Type="Byte" />
+          <Property Name="LabelScenarioID" Type="Byte" />
+          <Property Name="LiterIndex" Type="Int32" />
+          <Property Name="BoxCapacity" Type="Int32" />
+          <Property Name="PalletCapacity" Type="Int32" />
           <Property Name="Manufacturer" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
           <Property Name="Operator" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
           <Property Name="MarketID" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
           <Property Name="PTID" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
-          <Property Name="ModelCheck" Type="Boolean" Nullable="false" />
-          <Property Name="SWRead" Type="Boolean" Nullable="false" />
-          <Property Name="SWGS1Read" Type="Boolean" Nullable="false" />
+          <Property Name="ModelCheck" Type="Boolean" />
+          <Property Name="SWRead" Type="Boolean" />
+          <Property Name="SWGS1Read" Type="Boolean" />
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreateByID" Type="Int16" Nullable="false" />
           <Property Name="CloseDate" Type="DateTime" Precision="3" />
@@ -546,8 +576,8 @@
           <Property Name="FixedRG" Type="Boolean" />
           <Property Name="StartDate" Type="DateTime" Precision="0" />
           <Property Name="SWVersion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsBunch" Type="Boolean" Nullable="false" />
-          <Property Name="IsWeighingPackage" Type="Boolean" Nullable="false" />
+          <Property Name="IsBunch" Type="Boolean" />
+          <Property Name="IsWeighingPackage" Type="Boolean" />
           <NavigationProperty Name="FAS_Users" Relationship="Self.FK_FAS_GS_LOTs_FAS_Users" FromRole="FAS_GS_LOTs" ToRole="FAS_Users" />
           <NavigationProperty Name="FAS_Users1" Relationship="Self.FK_FAS_GS_LOTs_FAS_Users1" FromRole="FAS_GS_LOTs" ToRole="FAS_Users" />
           <NavigationProperty Name="FAS_Models" Relationship="FASModel.FK_FAS_GS_LOTs_FAS_Models" FromRole="FAS_GS_LOTs" ToRole="FAS_Models" />
@@ -673,6 +703,11 @@
             <End Role="EP_TypeVerification" EntitySet="EP_TypeVerification" />
           </AssociationSet>
           <EntitySet Name="EP_FileTypeMIME" EntityType="FASModel.EP_FileTypeMIME" />
+          <EntitySet Name="EP_Email" EntityType="FASModel.EP_Email" />
+          <AssociationSet Name="FK__Contract___Сusto__7EE1CA6C" Association="FASModel.FK__Contract___Сusto__7EE1CA6C">
+            <End Role="CT_Сustomers" EntitySet="CT_Сustomers" />
+            <End Role="Contract_LOT" EntitySet="Contract_LOT" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="CT_Сustomers">
           <Key>
@@ -681,6 +716,7 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="СustomerName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="ShortName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Contract_LOT" Relationship="FASModel.FK__Contract___Сusto__7EE1CA6C" FromRole="CT_Сustomers" ToRole="Contract_LOT" />
         </EntityType>
         <EntityType Name="EP_Log">
           <Key>
@@ -720,6 +756,7 @@
           <Property Name="NameProtocol" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="IsActiveBOT" Type="Boolean" Nullable="false" />
           <Property Name="IsActiveTOP" Type="Boolean" Nullable="false" />
+          <Property Name="Line" Type="Byte" />
         </EntityType>
         <EntityType Name="EP_ProtocolsInfo">
           <Key>
@@ -738,6 +775,7 @@
           <NavigationProperty Name="EP_TypeVerification" Relationship="FASModel.EP_TypeVer_fk" FromRole="EP_ProtocolsInfo" ToRole="EP_TypeVerification" />
           <NavigationProperty Name="FAS_Users" Relationship="FASModel.EP_UserID_fk" FromRole="EP_ProtocolsInfo" ToRole="FAS_Users" />
           <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Itter" Type="Int16" />
         </EntityType>
         <EntityType Name="EP_Result">
           <Key>
@@ -785,6 +823,7 @@
           <Property Name="ContentType" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="NameFile" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="extension" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="LOTID" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="EP_Machine">
           <Key>
@@ -820,6 +859,7 @@
           <Property Name="lenHDCP" Type="Int16" />
           <Property Name="ChipCode" Type="Int16" />
           <NavigationProperty Name="FAS_GS_LOTs" Relationship="FASModel.FK_FAS_GS_LOTs_FAS_Models" FromRole="FAS_Models" ToRole="FAS_GS_LOTs" />
+          <Property Name="CustomerID" Type="Int32" />
         </EntityType>
         <Association Name="FK_FAS_GS_LOTs_FAS_Models">
           <End Type="FASModel.FAS_Models" Role="FAS_Models" Multiplicity="1" />
@@ -862,11 +902,12 @@
           <Property Name="ParseLog" Type="Boolean" />
           <Property Name="StepSequence" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="HexFasSN" Type="Boolean" />
-          <Property Name="СustomersID" Type="Int32" />
+          <Property Name="СustomersID" Type="Int32" Nullable="false" />
           <Property Name="LOTSize" Type="Int32" />
           <Property Name="LOT_Shipped" Type="Int32" />
           <Property Name="FASNumberFormat2" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="DateManufacter" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="CT_Сustomers" Relationship="FASModel.FK__Contract___Сusto__7EE1CA6C" FromRole="Contract_LOT" ToRole="CT_Сustomers" />
         </EntityType>
         <Association Name="EP_protoc_fk">
           <End Type="FASModel.EP_Protocols" Role="EP_Protocols" Multiplicity="0..1" />
@@ -1021,6 +1062,27 @@
           <Property Name="MIMETypeInternetMediaType" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="FileExtrension" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="EP_Email">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NameAdress" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK__Contract___Сusto__7EE1CA6C">
+          <End Type="FASModel.CT_Сustomers" Role="CT_Сustomers" Multiplicity="1" />
+          <End Type="FASModel.Contract_LOT" Role="Contract_LOT" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CT_Сustomers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Contract_LOT">
+              <PropertyRef Name="СustomersID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1123,6 +1185,7 @@
           <EntitySetMapping Name="EP_Protocols">
             <EntityTypeMapping TypeName="FASModel.EP_Protocols">
               <MappingFragment StoreEntitySet="EP_Protocols">
+                <ScalarProperty Name="Line" ColumnName="Line" />
                 <ScalarProperty Name="IsActiveTOP" ColumnName="IsActiveTOP" />
                 <ScalarProperty Name="IsActiveBOT" ColumnName="IsActiveBOT" />
                 <ScalarProperty Name="NameProtocol" ColumnName="NameProtocol" />
@@ -1138,6 +1201,7 @@
           <EntitySetMapping Name="EP_ProtocolsInfo">
             <EntityTypeMapping TypeName="FASModel.EP_ProtocolsInfo">
               <MappingFragment StoreEntitySet="EP_ProtocolsInfo">
+                <ScalarProperty Name="Itter" ColumnName="Itter" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Visible" ColumnName="Visible" />
                 <ScalarProperty Name="TOPBOT" ColumnName="TOPBOT" />
@@ -1185,6 +1249,7 @@
           <EntitySetMapping Name="EP_Doc">
             <EntityTypeMapping TypeName="FASModel.EP_Doc">
               <MappingFragment StoreEntitySet="EP_Doc">
+                <ScalarProperty Name="LOTID" ColumnName="LOTID" />
                 <ScalarProperty Name="extension" ColumnName="extension" />
                 <ScalarProperty Name="NameFile" ColumnName="NameFile" />
                 <ScalarProperty Name="ContentType" ColumnName="ContentType" />
@@ -1219,6 +1284,7 @@
           <EntitySetMapping Name="FAS_Models">
             <EntityTypeMapping TypeName="FASModel.FAS_Models">
               <MappingFragment StoreEntitySet="FAS_Models">
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
                 <ScalarProperty Name="ChipCode" ColumnName="ChipCode" />
                 <ScalarProperty Name="lenHDCP" ColumnName="lenHDCP" />
                 <ScalarProperty Name="BotMask" ColumnName="BotMask" />
@@ -1272,6 +1338,16 @@
                 <ScalarProperty Name="FileExtrension" ColumnName="FileExtrension" />
                 <ScalarProperty Name="MIMETypeInternetMediaType" ColumnName="MIMETypeInternetMediaType" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EP_Email">
+            <EntityTypeMapping TypeName="FASModel.EP_Email">
+              <MappingFragment StoreEntitySet="EP_Email">
+                <ScalarProperty Name="NameAdress" ColumnName="NameAdress" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -52,10 +52,12 @@ namespace PDUManagment.Controllers
             createProtocol.UserID = int.Parse(Session["UsID"].ToString()); //Записываем userID в переменную
             createProtocol.GetCountProtocols();
             createProtocol.GenerateNameProtocol();
-            createProtocol.CreateProtocol();
-            createProtocol.GeneratePGName();
-            createProtocol.AddInfo();
-            createProtocol.SetLOG();
+
+            //foreach (var item in new List<byte>() { 1, 2, 3, 4 }) createProtocol.CreateProtocol( item);
+
+            //createProtocol.GeneratePGName();
+            //createProtocol.AddInfo();
+            //createProtocol.SetLOG();
 
             return RedirectToAction("Index","Work");
         }

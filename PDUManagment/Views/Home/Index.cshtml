@@ -19,11 +19,19 @@ else
 <div class="Block">
 
     @Html.Label("Введите пароль для входа", new { @class = "form-label" })
-    @using (Html.BeginForm("GetUserID", "Home", FormMethod.Post))
+
+    @using (Html.BeginForm("GetUserID", "Home", new { Loggin = true }, FormMethod.Post))
     {
         @Html.TextBoxFor(model => model.RFID, "", new { autocomplete = "off", autofocus = "on", placeholder = "Password", @type = "password" })
         <input type="submit" value="Войти" />
     }
+
+    @using (Html.BeginForm("GetUserID", "Home",new { Loggin = false }, FormMethod.Post))
+    {
+        <input type="submit" value="Войти без логина" />
+    }
+
+
 
 </div>
 

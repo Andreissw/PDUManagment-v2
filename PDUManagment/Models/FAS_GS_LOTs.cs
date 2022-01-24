@@ -30,21 +30,21 @@ public partial class FAS_GS_LOTs
 
     public bool IsActive { get; set; }
 
-    public bool IsHDCPUpload { get; set; }
+    public Nullable<bool> IsHDCPUpload { get; set; }
 
-    public bool IsCertUpload { get; set; }
+    public Nullable<bool> IsCertUpload { get; set; }
 
-    public bool IsMACUpload { get; set; }
+    public Nullable<bool> IsMACUpload { get; set; }
 
-    public byte WorkingScenarioID { get; set; }
+    public Nullable<byte> WorkingScenarioID { get; set; }
 
-    public byte LabelScenarioID { get; set; }
+    public Nullable<byte> LabelScenarioID { get; set; }
 
-    public int LiterIndex { get; set; }
+    public Nullable<int> LiterIndex { get; set; }
 
-    public int BoxCapacity { get; set; }
+    public Nullable<int> BoxCapacity { get; set; }
 
-    public int PalletCapacity { get; set; }
+    public Nullable<int> PalletCapacity { get; set; }
 
     public string Manufacturer { get; set; }
 
@@ -54,11 +54,11 @@ public partial class FAS_GS_LOTs
 
     public string PTID { get; set; }
 
-    public bool ModelCheck { get; set; }
+    public Nullable<bool> ModelCheck { get; set; }
 
-    public bool SWRead { get; set; }
+    public Nullable<bool> SWRead { get; set; }
 
-    public bool SWGS1Read { get; set; }
+    public Nullable<bool> SWGS1Read { get; set; }
 
     public System.DateTime CreateDate { get; set; }
 
@@ -84,9 +84,9 @@ public partial class FAS_GS_LOTs
 
     public string SWVersion { get; set; }
 
-    public bool IsBunch { get; set; }
+    public Nullable<bool> IsBunch { get; set; }
 
-    public bool IsWeighingPackage { get; set; }
+    public Nullable<bool> IsWeighingPackage { get; set; }
 
     public Nullable<bool> FakePackage { get; set; }
 

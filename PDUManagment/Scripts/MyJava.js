@@ -21,26 +21,23 @@ function SetName(object) {
 }
 
 function getVisible(value) {
-    var obj = document.getElementById('OrderDiv');
-    if (value == "Контрактное") {
-        obj.style.visibility = "visible";
-    }
-    else {
-        obj.style.visibility = "hidden";
-        obj.value = '';
-    }
+   
+    $.ajax({
+        url: "/CreateLOT/GetListModels",
+        dataType: "json",
+        data: { Name: value },
+        success: function (data) {
+            var m = $("#Model");
+            m.empty();
+            $.each(data, function () {
+               m.append($("<option></option>").val(this['Value']).html(this['Text']))
+            })
+        },
+    })
 
 }
 
 
-var valueResult = document.getElementById('Client').value;
-
-if (valueResult == "Контрактное") {
-    document.getElementById('OrderDiv').style.visibility = "visible";
-}
-else {
-    document.getElementById('OrderDiv').style.visibility = "hidden";
-}
 
 
 

@@ -51,6 +51,8 @@ public partial class EP_Protocols
 
     public bool IsActiveTOP { get; set; }
 
+    public Nullable<byte> Line { get; set; }
+
 
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

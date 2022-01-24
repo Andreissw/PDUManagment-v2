@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<PDUManagment.Classes.Table>
 
 @{
-    ViewBag.Title = "GetTableLots";
+    Layout = null;
 }
 
 <h2>Протоколы</h2>
@@ -9,20 +9,20 @@
 <div class="tb">
     <table class="table">
         <tr>
-            <th>Имя протокола</th>    
+            <th>Имя протокола</th>
             <th>Программы </th>
             <th>Сторон на плате  </th>
-            <th>Дата создания  </th>        
+            <th>Дата создания  </th>
             <th></th>
         </tr>
 
         @foreach (var item in Model)
         {
             <tr>
-             
+
                 <td>
                     @Html.DisplayFor(modelItem => item.ProtocolName)
-                </td>              
+                </td>
                 <td>
                     @Html.ActionLink("Показать", "GetPGName", new { ProtocolID = item.ID, name = item.Name, Protocolname = item.ProtocolName }, new { @class = "btn btn-info", target = "_blank" })
 
@@ -54,7 +54,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.DateCreate)
                 </td>
-              
+
 
                 @*@if (true)
                     {
@@ -73,42 +73,41 @@
 <style>
 
     .tb {
-        max-width:auto;
-        width:auto;
-        align-items:center;
-    }
-    .tb thead {
+        max-width: auto;
+        width: auto;
         align-items: center;
-        position: sticky;
-        top: 0px;
-        border: 5px solid black;
     }
 
-    .tb th {
-        align-content: center;
-        text-align: center;
-        background-color: gold;
-        border-top: 2px solid black;
-    }
+        .tb thead {
+            align-items: center;
+            position: sticky;
+            top: 0px;
+            border: 5px solid black;
+        }
 
-    .tb td {
-        /*width: 10%;*/
-        /*overflow: visible;*/
-        align-items: center;
-        text-align: center;
-        padding: 2%;
-        margin: 1%;
-        border-bottom: 2px dotted gray;
-    }
+        .tb th {
+            align-content: center;
+            text-align: center;
+            background-color: gold;
+            border-top: 2px solid black;
+        }
+
+        .tb td {
+            /*width: 10%;*/
+            /*overflow: visible;*/
+            align-items: center;
+            text-align: center;
+            padding: 2%;
+            margin: 1%;
+            border-bottom: 2px dotted gray;
+        }
 
         .tb table {
             font-size: 14px;
             background-color: antiquewhite;
         }
 
-    .tb tr:nth-child(odd) {
-        background-color: #EAF2D3;
-    }
-   
-
+        .tb tr:nth-child(odd) {
+            background-color: #EAF2D3;
+        }
 </style>

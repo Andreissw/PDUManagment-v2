@@ -23,11 +23,11 @@ namespace PDUManagment.Controllers
             var protocol = fas.EP_Protocols.Where(c => c.LOTID == ID).Select(c => new { ID = c.ID, LOTID = (int)c.LOTID, TOPBOT = c.TOPBOT, ProtocolName = c.NameProtocol }).FirstOrDefault();
             var dataView = GetSpecName(protocol.LOTID);
             var listProtocols = fas.EP_Protocols.Where(c => c.LOTID == protocol.LOTID).Select(c => c.ID).ToList();
-            var ListDocs = fas.EP_Doc.Where(c => listProtocols.Contains((int)c.IDProtocol) & c.Visible == true).Select(c => new Document { Name = c.Name, Path = c.Path, ContentType = c.ContentType, NameFile = c.NameFile, ID = c.ID , Extension = c.extension}).ToList();
+            var ListDocs = fas.EP_Doc.Where(c => c.LOTID == ID & c.Visible == true).Select(c => new Document { Name = c.Name, Path = c.Path, ContentType = c.ContentType, NameFile = c.NameFile, ID = c.ID , Extension = c.extension}).ToList();
 
             CreateOrder create = new CreateOrder()
             {
-                ProtocolID = protocol.ID,
+                //ProtocolID = protocol.ID,
                 mode = mode,
                 Order = dataView.NameOrder,
                 SpecificationBom = dataView.NameSpec,
@@ -52,6 +52,10 @@ namespace PDUManagment.Controllers
             {
                 result.IsActive = !create.IsActive;                
                 fas.SaveChanges();
+                var lin = result.IsActive == false ? "Закрытие заказа" : "Открытие заказа";
+                SetLog(lin, 13, create.LOTID);
+                Email.RunEmailFAS($"{lin} {result.FullLOTCode} -> " +
+                $"{create.Order}", $"Добрый день! Закрыт заказ: {result.FullLOTCode} .</br> Внёс изменения пользователь: {Session["Name"]}");
                 return RedirectToAction("Index", new { ID = create.LOTID });
             }
 
@@ -59,17 +63,33 @@ namespace PDUManagment.Controllers
             if (Result == null)
             {         
                 return RedirectToAction("Index", new { ID = create.LOTID });
-            }
+            }            
 
-            Result.IsActive = !create.IsActive;           
+            Result.IsActive = !create.IsActive;
+            var line = Result.IsActive == false ? "Закрытие заказа" : "Открытие заказа";
+            SetLog(line, 13, create.LOTID);
             fas.SaveChanges();
-            return RedirectToAction("Index", new { ID = create.LOTID });       
+
+            Email.RunEmailFAS($"{line} {Result.FULL_LOT_Code} -> " +
+            $"{create.Order}", $"Добрый день! Закрыт заказ: {Result.FULL_LOT_Code} .</br> Внёс изменения пользователь: {Session["Name"]}");
+
+            return RedirectToAction("Index", new { ID = create.LOTID  });       
         }
 
         public FileResult Download(string path,string ContentType, string Name, string Extension)
         {
             var doc = new byte[0];
-            doc = System.IO.File.ReadAllBytes(path);
+
+            try
+            {
+                doc = System.IO.File.ReadAllBytes(path);
+            }
+            catch (Exception)
+            {
+
+                return File(new byte[0], "application/octet-stream", "ФайлУдалёнИлиНеНайден.txt");
+            }
+           
 
             if (ContentType == null)        
                 ContentType = "application/octet-stream";             
@@ -82,6 +102,11 @@ namespace PDUManagment.Controllers
         [HttpPost]
         public ActionResult EditOrder(CreateOrder create)
         {
+            if (@Session["Name"] == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             var result = fas.Contract_LOT.Where(c => c.ID == create.LOTID).FirstOrDefault();
             
             if (result != null)
@@ -91,6 +116,10 @@ namespace PDUManagment.Controllers
                 TempData["OKOrder"] = "Сохранено";
                 SetLog(ord +" - "+ create.Order,7,create.LOTID);
                 fas.SaveChanges();
+
+                Email.RunEmailFAS($"Изменение имени заказа: {ord} -> " +
+              $"{create.Order}", $"Добрый день! Изменено имя заказа.</br> Старое именование: {ord}.</br> Новое Именование: {create.Order}.</br> Внёс изменения пользователь: {Session["Name"]}");
+
                 return RedirectToAction("Index", new {ID = create.LOTID });
             }
 
@@ -106,6 +135,10 @@ namespace PDUManagment.Controllers
             TempData["OKOrder"] = "Сохранено";
             SetLog(orde + " - " + create.Order, 7,create.LOTID);
             fas.SaveChanges();
+
+            Email.RunEmailFAS($"Изменение имени заказа {orde} -> " +
+                $"{create.Order}",$"Добрый день! Изменено имя заказа.</br> Старое именование: {orde}.</br> Новое Именование: {create.Order}.</br> Внёс изменения пользователь: {Session["Name"]}");
+
             return RedirectToAction("Index", new { ID = create.LOTID });
         }
 
@@ -120,6 +153,10 @@ namespace PDUManagment.Controllers
                 TempData["OKC"] = "Сохранено";
                 SetLog(c.ToString() + " - " + create.Count.ToString(), 8,create.LOTID);
                 fas.SaveChanges();
+
+                Email.RunEmailFAS($"Изменение количество - {create.Count} в заказе: {result.FullLOTCode}"
+              , $"Добрый день! Измененно количество в заказе: {result.FullLOTCode}.</br> Старое количество: {c}.</br> Новое количество: {create.Count}.</br> Внёс изменения пользователь: {Session["Name"]} ");
+
                 return RedirectToAction("Index", new { ID = create.LOTID });
             }
 
@@ -136,17 +173,25 @@ namespace PDUManagment.Controllers
 
             SetLog(co.ToString() + " - " + create.Count.ToString(), 8,create.LOTID);
             fas.SaveChanges();
+
+            Email.RunEmailFAS($"Изменение количество - {create.Count} в заказе: {result.FullLOTCode}"
+                ,$"Добрый день! Измененно количество в заказе: {result.FullLOTCode}.</br> Старое количество: {co}.</br> Новое количество: {create.Count}.</br> Внёс изменения пользователь: {Session["Name"]} ");
+
             return RedirectToAction("Index", new { ID = create.LOTID });            
         }
 
         public ActionResult EditTOPBOT(CreateOrder create)
         {
-            var obj = fas.EP_Protocols.Where(c => c.ID == create.ProtocolID);        
+            var obj = fas.EP_Protocols.Where(c => c.ID == create.LOTID);        
             var topbot = obj.FirstOrDefault().TOPBOT;
             obj.FirstOrDefault().TOPBOT = create.TOPBOTName == "Одностронняя плата" ? false : true;
             TempData["OKTOP"] = "Сохранено";
             SetLog(topbot + " - " + create.TOPBOTName,9, create.LOTID);
             fas.SaveChanges();
+
+            //Email.RunEmailFAS($"Изменение стороны - {create.TOPBOT} в протоколе {obj.FullLOTCode}"
+            //, $"Добрый день! Измененно количество в заказе {result.FullLOTCode}. Старое количество {result.LOTSize}. Новое количество {create.Count}. Внёс изменения пользователь {Session["Name"]} ");
+
             return RedirectToAction("Index", new { ID = create.LOTID });
         }
 
@@ -155,10 +200,22 @@ namespace PDUManagment.Controllers
         public JsonResult RemoveDocument(int ID)
         {
             var model = fas.EP_Doc.Where(c => c.ID == ID).FirstOrDefault();
-            var lotid = fas.EP_Doc.Where(c => c.ID == ID).Select(c => fas.EP_Protocols.Where(b => b.ID == c.IDProtocol).Select(b => b.LOTID).FirstOrDefault()).FirstOrDefault();
+            var lotid = fas.EP_Doc.Where(c => c.ID == ID).Select(c => c.LOTID).FirstOrDefault();
+
+            CreateOrder createClass = new CreateOrder();
+            var newpath = createClass.CheckFolderArchive(model.Path);
+
             model.Visible = false;
+            model.Path = newpath;
+
             SetLog("", 11, ID, lotid);
             fas.SaveChanges();
+
+            var view = GetSpecName(model.LOTID);
+
+            Email.RunEmailFAS($"Удаление документа - {model.NameFile} в заказе: {view.NameOrder}"
+            , $"Добрый день! удалён документ:  {model.Name} {model.NameFile}.</br> Внёс изменения пользователь: {Session["Name"]} ");
+
             return Json(true ,JsonRequestBehavior.AllowGet);
         }
 
@@ -170,15 +227,23 @@ namespace PDUManagment.Controllers
             model.NameFile = name;
             SetLog(n + " - " + name, 12, ID ,lotid);
             fas.SaveChanges();
+
+            var view = GetSpecName(model.LOTID);
+
+            Email.RunEmailFAS($"Изменено имя документа - {model.Name} в заказе: {view.NameOrder}"
+            , $"Добрый день! Изменено имя документа.</br>Старое имя: {n}. </br>Новое имя: {name}. </br>Внёс изменения пользователь: {Session["Name"]} ");
+
             return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult AddDocs(CreateOrder create)
         {
+            var view = GetSpecName(create.LOTID);
+            create.Date = view.DateManufacter;
             var _listDocs = new List<DocumentFile>() { new DocumentFile() { Files = create.BOM, Name = "BOM" } , new DocumentFile() { Files = create.Gerbers, Name = "Gerbers" }
 
            , new DocumentFile() { Files = create.PickPlace, Name = "PickPlace" } ,  new DocumentFile() { Files = create.AssemblyDrawings, Name = "AssemblyDrawings" } , new DocumentFile() { Files = create.Schematic, Name = "Schematic" }
-           ,  new DocumentFile() { Files = create.Fireware, Name = "FirmWare" } };
+           ,  new DocumentFile() { Files = create.Fireware, Name = "FirmWare" }, new DocumentFile() { Files = create.BlankOrder, Name = "BlankOrder" } };
 
             create.CheckFolder();
             create.SaveDoc(_listDocs);
@@ -191,6 +256,9 @@ namespace PDUManagment.Controllers
                 var idDoc = create.CreateDocument(item);
                 SetLog("", 10, idDoc,create.LOTID);
             }
+             
+            Email.RunEmailFAS($"Добавлены документы в заказе: {view.NameOrder}"
+           , $"Добрый день! Добавлены следующие документы. </br> {string.Join(",", create.ListDoc.Select(c=>c.NameFile))}.</br> Внёс изменения пользователь: {Session["Name"]} ");
 
             return RedirectToAction("Index", new { ID = create.LOTID });
         }
@@ -209,6 +277,7 @@ namespace PDUManagment.Controllers
                 NameClient = "ВЛВ",
                 Count = (int)c.CountinLot,
                 IsActive = c.IsActive,
+                DateManufacter = (DateTime)c.DateManufacter,
 
             }).FirstOrDefault();
 
@@ -222,6 +291,7 @@ namespace PDUManagment.Controllers
                     NameClient = fas.CT_Сustomers.Where(b => b.ID == c.СustomersID).FirstOrDefault().СustomerName,
                     Count = (int)c.LOTSize,
                     IsActive = c.IsActive,
+                    DateManufacter = (DateTime)c.DateManufacter,
 
                 }).FirstOrDefault();
             }

@@ -66,28 +66,36 @@ namespace PDUManagment.Classes
 
         public GS() 
         {
-            this.Name = "ВЛВ";            
+            this.Name = "N_ВЛВ";            
         }
 
         public override int AddLot(CreateOrder create)
         {
+            var modelid = fas.FAS_Models.Where(c => c.ModelName == create.Modelname).Select(c => c.ModelID).FirstOrDefault();
 
-            //FAS_GS_LOTs fAS_GS_LOTs = new FAS_GS_LOTs()
-            //{
-            //    FULL_LOT_Code = create.Order,
-            //    CreateByID = (short)create.UserID,
-            //    CreateDate = DateTime.UtcNow.AddHours(2),
-            //    Specification = create.SpecificationBom,
-            //    CountinLot = create.Count,
-            //    IsActive = false,
-            //};
+            FAS_GS_LOTs fAS_GS_LOTs = new FAS_GS_LOTs()
+            {
+                FULL_LOT_Code = create.Order,
+                CreateByID = (short)create.UserID,
+                CreateDate = DateTime.UtcNow.AddHours(2),
+                Specification = create.SpecificationBom,
+                CountinLot = create.Count,
+                IsActive = true,
+                DateManufacter = create.Date,
+                ModelID = modelid,
+                LOTCode = (short)create.LotCode,
+                Manufacturer = "DTVS",
+                Operator = "TRICOLOR",
 
-            //fas.FAS_GS_LOTs.Add(fAS_GS_LOTs);
-            //fas.SaveChanges();
-            //return fas.FAS_GS_LOTs.OrderByDescending(c => c.CreateDate).Select(c => c.LOTID).FirstOrDefault();
+               
+            };
+
+            fas.FAS_GS_LOTs.Add(fAS_GS_LOTs);
+            fas.SaveChanges();
+            return fas.FAS_GS_LOTs.OrderByDescending(c => c.CreateDate).Select(c => c.LOTID).FirstOrDefault();
 
 
-            return  30;
+            //return 30;
         }
 
         public override void UpdateLot( EditLot editLot)
@@ -108,24 +116,29 @@ namespace PDUManagment.Classes
         public override int AddLot(CreateOrder create )
         {
 
-            //var CustomersID = fas.CT_Сustomers.Where(c => c.СustomerName == create.ClientType).FirstOrDefault().ID;
+            var CustomersID = fas.CT_Сustomers.Where(c => c.СustomerName == create.ClientName).FirstOrDefault().ID;
+            var modelid = fas.FAS_Models.Where(c => c.ModelName == create.Modelname).Select(c => c.ModelID).FirstOrDefault();
 
-            //Contract_LOT contract_LOT = new Contract_LOT()
-            //{
-            //    FullLOTCode = create.Order,
-            //    СustomersID = CustomersID,
-            //    CreateDate = DateTime.UtcNow.AddHours(2),
-            //    Specification = create.SpecificationBom,
-            //    LOTSize = create.Count,
-            //    IsActive = true,
-            //};
+            Contract_LOT contract_LOT = new Contract_LOT()
+            {
+                FullLOTCode = create.Order,
+                СustomersID = CustomersID,
+                CreateDate = DateTime.UtcNow.AddHours(2),
+                Specification = create.SpecificationBom,
+                LOTSize = create.Count,
+                IsActive = true,
+                DateManufacter = create.Date,
+                ModelID = modelid,
+                LOTCode = (short)create.LotCode,
+                
+            };
 
-            //fas.Contract_LOT.Add(contract_LOT);
-            //fas.SaveChanges();
-            //return fas.Contract_LOT.OrderByDescending(c => c.CreateDate).Select(c => c.ID).FirstOrDefault();
+            fas.Contract_LOT.Add(contract_LOT);
+            fas.SaveChanges();
+            return fas.Contract_LOT.OrderByDescending(c => c.CreateDate).Select(c => c.ID).FirstOrDefault();
 
 
-            return 20065;
+            //return 20065;
         }
 
         public override void UpdateLot(EditLot editLot)
