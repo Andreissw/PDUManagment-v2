@@ -113,15 +113,16 @@ namespace PDUManagment.Controllers
             create.SaveSpec(); //Сохраняем спецификацию в указнный путь
             create.SaveDoc(_listDocs); //Сохраняем документ, если он был указан по указанному пути
             create.GenerateNameProtocol(); //генерируем имя протокола
-            create.ListProtocolID = new List<int>();
-            foreach (var item in new List<byte>() { 1, 2, 3, 4 }) create.CreateProtocol(item);
+            //create.ListProtocolID = new List<int>();
+            //foreach (var item in new List<byte>() { 1, 2, 3, 4 }) create.CreateProtocol(item);
+            create.CreateProtocol();
 
             foreach (var item in create.ListDoc) create.CreateDocument(item);
 
-            foreach (var item in create.ListProtocolID) create.GeneratePGName(item);
-            foreach (var item in create.ListProtocolID) create.AddInfo(item);
-
+            create.GeneratePGName();
+            create.AddInfo();
             create.SetLOG();
+
             SendMessage(create);
 
             #region

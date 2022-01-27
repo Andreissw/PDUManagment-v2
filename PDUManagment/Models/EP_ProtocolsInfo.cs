@@ -40,6 +40,10 @@ public partial class EP_ProtocolsInfo
 
     public Nullable<short> Itter { get; set; }
 
+    public Nullable<byte> line { get; set; }
+
+    public bool Start { get; set; }
+
 
 
     public virtual EP_Protocols EP_Protocols { get; set; }

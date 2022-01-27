@@ -120,8 +120,8 @@ namespace PDUManagment.Classes.Create
 
         public void CheckFolder()
         {
-            string PathObmen = @"\\192.168.180.9\ProdSoft\PDUManagment\";
-            //string PathObmen = @"\\s-fs-cts\Obmen\Производство\Производственный_заказ\";
+            //string PathObmen = @"\\192.168.180.9\ProdSoft\PDUManagment\";
+            string PathObmen = @"\\s-fs-cts\Obmen\Производство\Производственный_заказ\";
             var path = CheckFolder(PathObmen + ClientName);
             path = CheckFolder(path + "\\" + Date.Year);
             path = CheckFolder(path + "\\" + Date.ToString("MM_MMMM"));
