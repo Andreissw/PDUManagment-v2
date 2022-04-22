@@ -15,8 +15,8 @@
         @*<h1>Пользователь @Session["Name"]</h1>*@
     </div>
     <div>
-        <h2>Редактирование протокола</h2>
-        <h3>Протокол @Model.ProtocolName</h3>
+        <h2>Редактирование</h2>
+        @*<h3>Протокол @Model.ProtocolName</h3>*@
         <h3> Заказ @Model.Order </h3>
     </div>
 </div>
@@ -56,6 +56,49 @@
     <div class="MyForm">
         <div style="background-color: lightgray; border:1px dashed gray">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @if (Model.OTK)
+            {
+                <div>
+                    <p>ОТК Цель качества</p>
+                    <div>
+                        <h4>Цех Поверхностного монтажа</h4>
+                        <input id="ObjectiveFAS" type="number" max="100" min="0" step="any" placeholder="0,00" value="@Model.ObjectiveSMT" />
+                        <input type="button" value="Сохранить" class="btn btn-success" onclick="SetObjective( @Model.LOTID,'Цех Поверхностного монтажа',document.getElementById('ObjectiveFAS').value)" />
+                    </div>
+                    <div>
+                        <h4>Цех Сборки</h4>
+                        <input id="ObjectiveSMT" type="number" max="100" min="0" step="any" placeholder="0,00" value="@Model.ObjectiveFAS" />
+                        <input type="button" value="Сохранить" class="btn btn-success" onclick="SetObjective( @Model.LOTID,'Цех Сборки',document.getElementById('ObjectiveSMT').value)" />
+                    </div>
+                    <div>
+                        <h4>Общий заводской</h4>
+                        <input id="ObjectiveGeneral" type="number" max="100" min="0" step="any" placeholder="0,00" value="@Model.ObjectiveGeneral" />
+                        <input type="button" value="Сохранить" class="btn btn-success" onclick="SetObjective( @Model.LOTID,'Общий заводской',document.getElementById('ObjectiveGeneral').value)" />
+                    </div>
+                  
+                </div>
+            }
+            else
+            {
+                <div>
+                    <p>ОТК Цель</p>
+                        <div>
+                            <h4>Цех Поверхностного монтажа</h4>
+                            <h4>@Model.ObjectiveFAS %</h4>
+                        </div>
+                         <div>
+                             <h4>Цех Сборки</h4>
+                            <h4>@Model.ObjectiveSMT %</h4>
+                        </div>
+                         <div>
+                             <h4>Общий заводской</h4>
+                            <h4>@Model.ObjectiveGeneral %</h4>
+                        </div>
+                    
+                   
+                </div>
+            }
+
 
             @using (Html.BeginForm("EditOrder", "Edit", FormMethod.Post))
             {
@@ -331,6 +374,39 @@
 
 <script type="text/javascript">
 
+    $(document).on('invalid-form.validate', 'form', function () {
+        var button = $(this).find(':submit');
+        setTimeout(function () {
+            button.removeAttr('disabled');
+        }, 1);
+    });
+
+    $(document).on('submit', 'form', function () {
+        var button = $(this).find(':submit');
+        setTimeout(function () {
+            button.attr('disabled', 'disabled');
+        }, 0);
+    });
+
+    function SetObjective(LOTID, type, objective) {
+
+        //var objective = document.getElementById('Objective').value;
+        if (objective > 100 || objective <= 0) {
+            alert('Значение цели не должно превышать 100 или быть меньше 0')
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("SetObjective","Edit")',
+            dataType: "json",
+            data: { LOTID: LOTID, Objective: objective, Type: type },
+            success: function () {
+                alert('Сохранено!')
+            }
+        });
+      
+    }
+
     function EditName(id) {
 
        var name =  document.getElementById("name" + id).value;
@@ -369,7 +445,7 @@
                     RemoveRow(line);
                 }
                 else {
-                    alert('Ошибка');
+                    alert(data);
                 }
             },
             error: function (xhr, status, error) {

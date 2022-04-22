@@ -1,8 +1,5 @@
 ﻿using PDUManagment.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace PDUManagment.Controllers
@@ -36,7 +33,7 @@ namespace PDUManagment.Controllers
                 TempData["Er"] = "Не верный формат пароля";
                 return RedirectToAction("Index");
             }
-           
+
             var ListUser = PDUManagment.User.CheckUser(user.RFID);
 
             if (ListUser.Count == 0)
@@ -60,8 +57,8 @@ namespace PDUManagment.Controllers
             Session["RFID"] = user.RFID;
             Session["Name"] = ListUser[0];
             Session["UsID"] = user.UserID;
-            return RedirectToAction("Index","Work");
+            return RedirectToAction("Index", "Work");
         }
-   
+
     }
 }

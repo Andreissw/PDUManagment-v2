@@ -1,13 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PDUManagment.Classes;
-using PDUManagment.Classes.Create;
+﻿using PDUManagment.Classes;
 using PDUManagment.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Ports;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace PDUManagment.Controllers
@@ -22,10 +17,8 @@ namespace PDUManagment.Controllers
 
         public ActionResult Index()
         {
-            if (@Session["Name"] == null)
-            {
-                return RedirectToAction("Index","Home");
-            }
+            if (@Session["Name"] == null)   return RedirectToAction("Index", "Home");
+            
 
             return View();
         }
@@ -58,25 +51,25 @@ namespace PDUManagment.Controllers
                 var dataView = GetSpecName(item);
                 Table table = new Table()
                 {
-                     ID = item,
-                     NameClient = dataView.NameClient,
-                     Name = dataView.NameOrder,
-                     DateCreate = dataView.DateCreate,
-                     TypeClient = dataView.ClientType,            
-                     IsActive = dataView.IsActive,
+                    ID = item,
+                    NameClient = dataView.NameClient,
+                    Name = dataView.NameOrder,
+                    DateCreate = dataView.DateCreate,
+                    TypeClient = dataView.ClientType,
+                    IsActive = dataView.IsActive,
                 };
 
                 tables.Add(table);
             }
 
-            return View(tables.OrderByDescending(c=>c.DateCreate));
+            return View(tables.OrderByDescending(c => c.DateCreate));
         }
-       
+
         public ActionResult GetTableProtocols(int LOTID)
         {
             List<Table> tables = new List<Table>();
 
-            var listProtocols = fas.EP_Protocols.Where(c=>c.LOTID == LOTID).OrderByDescending(c=>c.DateCreate).Select(c => new { ID = c.ID, DateCreate = c.DateCreate, LOTID = (int)c.LOTID, TOPBOT = c.TOPBOT, nameprt = c.NameProtocol }).ToList();
+            var listProtocols = fas.EP_Protocols.Where(c => c.LOTID == LOTID).OrderByDescending(c => c.DateCreate).Select(c => new { ID = c.ID, DateCreate = c.DateCreate, LOTID = (int)c.LOTID, TOPBOT = c.TOPBOT, nameprt = c.NameProtocol }).ToList();
 
             foreach (var item in listProtocols)
             {
@@ -86,9 +79,9 @@ namespace PDUManagment.Controllers
                     ID = item.ID,
                     DateCreate = (DateTime)item.DateCreate,
                     ProtocolName = item.nameprt,
-                    ProgrammName = fas.EP_PGName.Where(b=>b.IDProtocol == item.ID).Select(b=> new  ProgrammNames                    
-                    { 
-                        Machine =  b.EP_Machine.Name,                       
+                    ProgrammName = fas.EP_PGName.Where(b => b.IDProtocol == item.ID).Select(b => new ProgrammNames
+                    {
+                        Machine = b.EP_Machine.Name,
                         PGName = b.Name
 
                     }).ToList(),

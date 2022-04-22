@@ -97,6 +97,7 @@
           <Property Name="DocumentID" Type="int" />
           <Property Name="LOTID" Type="int" />
           <Property Name="line" Type="tinyint" />
+          <Property Name="Iter" Type="smallint" />
         </EntityType>
         <EntityType Name="EP_Machine">
           <Key>
@@ -244,6 +245,16 @@
           <Property Name="lenHDCP" Type="smallint" />
           <Property Name="ChipCode" Type="smallint" />
           <Property Name="CustomerID" Type="int" />
+          <Property Name="IDQuality" Type="int" />
+        </EntityType>
+        <EntityType Name="FAS_Objective">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LOTID" Type="int" Nullable="false" />
+          <Property Name="Objective" Type="float" />
+          <Property Name="Manuf" Type="nvarchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="FAS_Users">
           <Key>
@@ -465,6 +476,7 @@
           <EntitySet Name="EP_TypeVerification" EntityType="Self.EP_TypeVerification" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_GS_LOTs" EntityType="Self.FAS_GS_LOTs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_Models" EntityType="Self.FAS_Models" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FAS_Objective" EntityType="Self.FAS_Objective" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_Users" EntityType="Self.FAS_Users" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="EP_Doc_fk" Association="Self.EP_Doc_fk">
             <End Role="EP_TypeDocument" EntitySet="EP_TypeDocument" />
@@ -714,6 +726,7 @@
             <End Role="CT_Сustomers" EntitySet="CT_Сustomers" />
             <End Role="Contract_LOT" EntitySet="Contract_LOT" />
           </AssociationSet>
+          <EntitySet Name="FAS_Objective" EntityType="FASModel.FAS_Objective" />
         </EntityContainer>
         <EntityType Name="CT_Сustomers">
           <Key>
@@ -745,6 +758,7 @@
           <Property Name="DocumentID" Type="Int32" />
           <Property Name="LOTID" Type="Int32" />
           <Property Name="line" Type="Byte" />
+          <Property Name="Iter" Type="Int16" />
         </EntityType>
         <EntityType Name="EP_Protocols">
           <Key>
@@ -870,6 +884,7 @@
           <Property Name="ChipCode" Type="Int16" />
           <NavigationProperty Name="FAS_GS_LOTs" Relationship="FASModel.FK_FAS_GS_LOTs_FAS_Models" FromRole="FAS_Models" ToRole="FAS_GS_LOTs" />
           <Property Name="CustomerID" Type="Int32" />
+          <Property Name="IDQuality" Type="Int32" />
         </EntityType>
         <Association Name="FK_FAS_GS_LOTs_FAS_Models">
           <End Type="FASModel.FAS_Models" Role="FAS_Models" Multiplicity="1" />
@@ -1093,6 +1108,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="FAS_Objective">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LOTID" Type="Int32" Nullable="false" />
+          <Property Name="Objective" Type="Double" />
+          <Property Name="Manuf" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1178,6 +1202,7 @@
           <EntitySetMapping Name="EP_Log">
             <EntityTypeMapping TypeName="FASModel.EP_Log">
               <MappingFragment StoreEntitySet="EP_Log">
+                <ScalarProperty Name="Iter" ColumnName="Iter" />
                 <ScalarProperty Name="line" ColumnName="line" />
                 <ScalarProperty Name="LOTID" ColumnName="LOTID" />
                 <ScalarProperty Name="DocumentID" ColumnName="DocumentID" />
@@ -1299,6 +1324,7 @@
           <EntitySetMapping Name="FAS_Models">
             <EntityTypeMapping TypeName="FASModel.FAS_Models">
               <MappingFragment StoreEntitySet="FAS_Models">
+                <ScalarProperty Name="IDQuality" ColumnName="IDQuality" />
                 <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
                 <ScalarProperty Name="ChipCode" ColumnName="ChipCode" />
                 <ScalarProperty Name="lenHDCP" ColumnName="lenHDCP" />
@@ -1363,6 +1389,16 @@
                 <ScalarProperty Name="NameAdress" ColumnName="NameAdress" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FAS_Objective">
+            <EntityTypeMapping TypeName="FASModel.FAS_Objective">
+              <MappingFragment StoreEntitySet="FAS_Objective">
+                <ScalarProperty Name="Manuf" ColumnName="Manuf" />
+                <ScalarProperty Name="Objective" ColumnName="Objective" />
+                <ScalarProperty Name="LOTID" ColumnName="LOTID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

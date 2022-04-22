@@ -28,6 +28,10 @@ namespace PDUManagment.Controllers
             CreateOrder create = new CreateOrder()
             {
                 //ProtocolID = protocol.ID,
+                OTK = IsOTK(),
+                ObjectiveFAS = fas.FAS_Objective.Where(c => c.LOTID == protocol.LOTID & c.Manuf == "Цех Сборки").Select(c => c.Objective).FirstOrDefault(),
+                ObjectiveSMT = fas.FAS_Objective.Where(c => c.LOTID == protocol.LOTID & c.Manuf == "Цех Поверхностного монтажа").Select(c => c.Objective).FirstOrDefault(),
+                ObjectiveGeneral = fas.FAS_Objective.Where(c => c.LOTID == protocol.LOTID & c.Manuf == "Общий заводской").Select(c => c.Objective).FirstOrDefault(),
                 mode = mode,
                 Order = dataView.NameOrder,
                 SpecificationBom = dataView.NameSpec,
@@ -42,6 +46,12 @@ namespace PDUManagment.Controllers
                 IsActive = dataView.IsActive,
             };
             return View(create);
+        }
+
+        bool IsOTK()
+        {
+            var rfid = Session["RFID"].ToString();
+            return fas.FAS_Users.Where(c=>c.IDService == 2).Where(c=> c.RFID ==  rfid).Any();
         }
 
 
@@ -204,8 +214,9 @@ namespace PDUManagment.Controllers
 
             CreateOrder createClass = new CreateOrder();
             var newpath = createClass.CheckFolderArchive(model.Path);
-
             model.Visible = false;
+            if (newpath.Contains("FAIL")) { fas.SaveChanges(); return Json(newpath, JsonRequestBehavior.AllowGet); }
+
             model.Path = newpath;
 
             SetLog("", 11, ID, lotid);
@@ -217,6 +228,45 @@ namespace PDUManagment.Controllers
             , $"Добрый день! удалён документ:  {model.Name} {model.NameFile}.</br> Внёс изменения пользователь: {Session["Name"]} ");
 
             return Json(true ,JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult SetObjective(int LOTID,double Objective, string Type)
+        {
+            if (GetObjective(LOTID,Type))
+                UpateObj(LOTID, Objective, Type);
+            else
+                SetObj(LOTID,Objective,Type);
+
+            var data = GetSpecName(LOTID);
+
+            Email.RunEmailFAS("Изменение цели по качеству", $@"Цель по заказу {data.NameOrder}. Цех: {Type} изменена на {Objective}");
+
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
+
+        void SetObj(int LOTID, double Objective, string Type)
+        {
+            FAS_Objective fAS_Objective = new FAS_Objective()
+            {
+                LOTID = LOTID,
+                Objective = Objective,
+                Manuf = Type,
+            };
+
+            fas.FAS_Objective.Add(fAS_Objective);
+            fas.SaveChanges();
+        }
+
+        void UpateObj(int LOTID, double Objective,string Type)
+        {
+            var result = fas.FAS_Objective.Where(c => c.LOTID == LOTID & c.Manuf == Type);
+            result.FirstOrDefault().Objective = Objective;
+            fas.SaveChanges();
+        }
+
+        bool GetObjective(int LOTID, string Type)
+        {
+            return fas.FAS_Objective.Where(c => c.LOTID == LOTID & c.Manuf == Type).Select(c => c.ID == c.ID).FirstOrDefault();
         }
 
         public JsonResult RenameDocument(int ID, string name)
@@ -238,13 +288,14 @@ namespace PDUManagment.Controllers
 
         public ActionResult AddDocs(CreateOrder create)
         {
+            
             var view = GetSpecName(create.LOTID);
             create.Date = view.DateManufacter;
             var _listDocs = new List<DocumentFile>() { new DocumentFile() { Files = create.BOM, Name = "BOM" } , new DocumentFile() { Files = create.Gerbers, Name = "Gerbers" }
 
            , new DocumentFile() { Files = create.PickPlace, Name = "PickPlace" } ,  new DocumentFile() { Files = create.AssemblyDrawings, Name = "AssemblyDrawings" } , new DocumentFile() { Files = create.Schematic, Name = "Schematic" }
            ,  new DocumentFile() { Files = create.Fireware, Name = "FirmWare" }, new DocumentFile() { Files = create.BlankOrder, Name = "BlankOrder" } };
-
+            create.ClientName = create.ClientName == "ВЛВ"? "N_ВЛВ" : create.ClientName;
             create.CheckFolder();
             create.SaveDoc(_listDocs);
 
@@ -256,9 +307,9 @@ namespace PDUManagment.Controllers
                 var idDoc = create.CreateDocument(item);
                 SetLog("", 10, idDoc,create.LOTID);
             }
-             
+
             Email.RunEmailFAS($"Добавлены документы в заказе: {view.NameOrder}"
-           , $"Добрый день! Добавлены следующие документы. </br> {string.Join(",", create.ListDoc.Select(c=>c.NameFile))}.</br> Внёс изменения пользователь: {Session["Name"]} ");
+           , $"Добрый день! Добавлены следующие документы. </br> {string.Join(",", create.ListDoc.Select(c => c.NameFile))}.</br> Внёс изменения пользователь: {Session["Name"]} ");
 
             return RedirectToAction("Index", new { ID = create.LOTID });
         }

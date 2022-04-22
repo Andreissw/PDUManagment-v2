@@ -66,6 +66,8 @@ public partial class FASEntities : DbContext
 
     public virtual DbSet<EP_Email> EP_Email { get; set; }
 
+    public virtual DbSet<FAS_Objective> FAS_Objective { get; set; }
+
 }
 
 }

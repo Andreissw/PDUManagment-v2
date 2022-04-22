@@ -5,8 +5,13 @@
 }
 <h2>Заказы</h2>
 
-<table class="table">
-    <tr>
+<div style="display:flex; align-items:center">
+    <h4>Фильтр</h4>
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Поиск..." title="Type in a name" style="margin-left:1%; max-width: 400px; width:400px;">
+</div>
+
+<table class="table" id="myTable">
+    <tr class="header">
         <th>Статус заказа</th>
         <th>Тип заказа </th>       
         <th>Заказичк </th>
@@ -88,3 +93,20 @@
         background-color: #EAF2D3;
     }
 </style>
+
+<script>
+    const myFunction = () => {
+        const trs = document.querySelectorAll('#myTable tr:not(.header)')
+        const filter = document.querySelector('#myInput').value
+        const regex = new RegExp(filter, 'i')
+        const isFoundInTds = td => regex.test(td.innerHTML)
+        const isFound = childrenArr => childrenArr.some(isFoundInTds)
+        const setTrStyleDisplay = ({ style, children }) => {
+            style.display = isFound([
+                ...children // <-- All columns
+            ]) ? '' : 'none'
+        }
+
+        trs.forEach(setTrStyleDisplay)
+    }
+</script>

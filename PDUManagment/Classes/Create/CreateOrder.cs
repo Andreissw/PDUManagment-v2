@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -18,10 +16,17 @@ namespace PDUManagment.Classes.Create
         string _path { get; set; }
         string _pathSpec { get; set; }
         string _pathDoc { get; set; }
-        [Required]        
+        [Required]
         [Min(10)]
         public int Count { get; set; }
-        public string mode { get; set; }     
+        public double? ObjectiveFAS { get; set; }
+
+        public double? ObjectiveSMT { get; set; }
+
+        public double? ObjectiveGeneral { get; set; }
+        public string mode { get; set; }
+
+        public bool OTK { get; set; }
 
         public string ClientType { get; set; }
 
@@ -41,7 +46,7 @@ namespace PDUManagment.Classes.Create
         public string SpecificationBom { get; set; }
         [MinLength(5)]
         public string Document { get; set; }
-        public string DocumentPath { get; set; }     
+        public string DocumentPath { get; set; }
         [Required]
         public HttpPostedFileBase FileSpec { get; set; }
 
@@ -51,14 +56,15 @@ namespace PDUManagment.Classes.Create
         public List<HttpPostedFileBase> PickPlace { get; set; }
         public List<HttpPostedFileBase> AssemblyDrawings { get; set; }
         public List<HttpPostedFileBase> Schematic { get; set; }
-        public List<HttpPostedFileBase> Fireware { get; set; }       
+        public List<HttpPostedFileBase> Fireware { get; set; }
 
-        
+
         public List<DocData> ListDoc = new List<DocData>();
 
         public override void SetLOG()
         {
-            using (FASEntities fas = new FASEntities()) {
+            using (FASEntities fas = new FASEntities())
+            {
 
                 EP_Log log = new EP_Log()
                 {
@@ -96,26 +102,41 @@ namespace PDUManagment.Classes.Create
 
                         var contentType = new FASEntities().EP_FileTypeMIME.Where(c => c.FileExtrension == fileextresion).Select(c => c.MIMETypeInternetMediaType).FirstOrDefault();
                         var name = _pathDoc.Substring(_pathDoc.LastIndexOf('\\') + 1);
-                       
-                        name = name.Substring(0,name.Length - fileextresion.Length);
-                        ListDoc.Add(new DocData() { Path = _pathDoc, Name = item.Name, ContentType = contentType, NameFile = name, Extension = fileextresion });                    
+
+                        try
+                        {
+                            name = name.Substring(0, name.Length - fileextresion.Length);
+
+                        }
+                        catch (ArgumentOutOfRangeException ex)
+                        {
+                            fileextresion = "";
+                            name = name.Substring(0, name.Length);
+                        }
+
+                        if (name.Length > 150) name.Substring(0, 150);
+
+
+                        ListDoc.Add(new DocData() { Path = _pathDoc, Name = item.Name, ContentType = contentType, NameFile = name, Extension = fileextresion });
                     }
                 }
             }
-        }
+        
+
+                }
 
         public void SaveSpec()
         {
-           var result = Path.GetFileName(FileSpec.FileName);
-           _pathSpec = Path.Combine(_path + result);
-           FileSpec.SaveAs(_pathSpec);
-           var fileextresion = _pathSpec.Substring(_pathSpec.LastIndexOf('.'));
-           
-           var contentType = new FASEntities().EP_FileTypeMIME.Where(c => c.FileExtrension == fileextresion).Select(c => c.MIMETypeInternetMediaType).FirstOrDefault();
-           var name = _pathSpec.Substring(_pathSpec.LastIndexOf('\\') + 1);
-          
-           name = name.Substring(0,name.Length - fileextresion.Length);
-            ListDoc.Add(new DocData() { Path = _pathSpec, Name = "Спецификация", ContentType = contentType, NameFile = name, Extension = fileextresion });           
+            var result = Path.GetFileName(FileSpec.FileName);
+            _pathSpec = Path.Combine(_path + result);
+            FileSpec.SaveAs(_pathSpec);
+            var fileextresion = _pathSpec.Substring(_pathSpec.LastIndexOf('.'));
+
+            var contentType = new FASEntities().EP_FileTypeMIME.Where(c => c.FileExtrension == fileextresion).Select(c => c.MIMETypeInternetMediaType).FirstOrDefault();
+            var name = _pathSpec.Substring(_pathSpec.LastIndexOf('\\') + 1);
+
+            name = name.Substring(0, name.Length - fileextresion.Length);
+            ListDoc.Add(new DocData() { Path = _pathSpec, Name = "Спецификация", ContentType = contentType, NameFile = name, Extension = fileextresion });
         }
 
         public void CheckFolder()
@@ -130,12 +151,23 @@ namespace PDUManagment.Classes.Create
         }
 
         public string CheckFolderArchive(string _path)
-        {            
+        {
             var path = _path.Substring(0, _path.LastIndexOf("\\"));
             path = path + "\\" + "Архив";
             path = CheckFolder(path);
             path = path + _path.Substring(_path.LastIndexOf("\\"));
-            File.Move(_path, path);
+
+            try
+            {
+
+                File.Copy(_path, path, true);
+            }
+            catch (IOException e)
+            {
+
+                return "FAIL__" + e.ToString();
+            }
+
             return path;
         }
 
@@ -144,6 +176,7 @@ namespace PDUManagment.Classes.Create
         {
             //if (!Directory.Exists(Path))
             //    Directory.CreateDirectory(Path);
+            Path = Path.Replace("\"", "").Replace(":", "");
 
             if (!Directory.Exists(Path))
                 new DirectoryInfo(Path).Create();
@@ -185,7 +218,7 @@ namespace PDUManagment.Classes.Create
     }
 
     public class DocumentFile
-    { 
+    {
         public List<HttpPostedFileBase> Files { get; set; }
 
         public string Name { get; set; }
